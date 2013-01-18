@@ -1,0 +1,182 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:a4j="http://richfaces.org/a4j"
+      xmlns:c="http://java.sun.com/jstl/core"
+      xmlns:rich="http://richfaces.org/rich">
+
+<body>
+<ui:composition template="/templates/template.xhtml">
+
+    <ui:define name="title">JBoss Wise GUI</ui:define>
+
+    <ui:define name="body">
+        <fieldset style="width:600px">
+            <legend>Wise GUI</legend>
+            <p>
+                Please start by providing the WSDL URL you want to consume
+            </p>
+
+            <p>
+                The provided url will be used to retrieve a wsdl which will then be parsed to present you the available endpoints.
+            </p>
+            <rich:panel header="WSDL selection">
+                <h:form id="wsdlSelection">
+                    <h:outputLabel value="URL:" for="wsdlUrlInput"/>
+                    <h:inputText id="wsdlUrlInput" value="#{clientConversationBean.wsdlUrl}" />
+                    <a4j:commandButton value="OK" render="opSelectionPanel" action="#{clientConversationBean.init}" />
+                </h:form>
+            </rich:panel>
+            <br />
+            <a4j:outputPanel id="opSelectionPanel">
+            <rich:panel header="Operation selection">
+                <h:form id="epSelection">
+                    <rich:panelMenu itemMode="ajax" groupMode="ajax" groupExpandedLeftIcon="triangleUp" rendered="#{not empty clientConversationBean.services}"
+                        groupCollapsedLeftIcon="triangleDown" topGroupExpandedRightIcon="chevronUp"
+                        topGroupCollapsedRightIcon="chevronDown" itemLeftIcon="disc" itemChangeListener="#{clientConversationBean.updateCurrentOperation}">
+                        <c:forEach var="service" items="#{clientConversationBean.services}" >
+                            <rich:panelMenuGroup label="#{service.name}" expanded="true">
+                                <c:forEach var="port" items="#{service.ports}" >
+                                    <rich:panelMenuGroup label="#{port.name}" expanded="true">
+                                        <c:forEach var="operation" items="#{port.operations}" >
+                                            <rich:panelMenuItem label="#{operation.fullName}" name="#{service.name};#{port.name};#{operation.name}"
+                                                action="#{clientConversationBean.parseOperationParameters}"/>
+                                        </c:forEach>
+                                    </rich:panelMenuGroup>
+                                </c:forEach>
+                            </rich:panelMenuGroup>
+                        </c:forEach>
+                    </rich:panelMenu>
+                    <a4j:outputPanel ajaxRendered="true">
+                        <rich:panel rendered="#{not empty clientConversationBean.currentOperation}">
+                            <h:outputText value="#{clientConversationBean.currentOperation} selected" id="current" />
+                        </rich:panel>
+                    </a4j:outputPanel>
+                </h:form>
+            </rich:panel>
+            <br />
+            <a4j:outputPanel id="parInputPanel" ajaxRendered="true">
+            
+            <rich:accordion switchType="client">
+            <rich:accordionItem header="Request:">
+            
+            <rich:panel header="Parameters input" rendered="#{not empty clientConversationBean.inputTree}">
+                <h:form id="parInput">
+                    <rich:tree id="richTree" var="node" value="#{clientConversationBean.inputTree}" nodeType="#{node.kind}" 
+				switchType="ajax" binding="#{clientConversationBean.inTree}">
+				        <rich:treeNode type="simple">
+				        	<h:outputText value="#{node.type} : #{node.name} " />
+					        <h:selectBooleanCheckbox id="foo-chk" value="#{node.notNil}" disabled="#{node.notNillable}" />
+					        <h:inputText value="#{node.value}" id="foo" label="" rendered="#{node.type!='boolean' and node.type!='Boolean'}" columns="10" onfocus="document.getElementById(this.id + '-chk').checked=true" />
+					        <h:selectOneMenu value="#{node.value}" rendered="#{node.type=='boolean' or node.type=='Boolean'}">
+        						<f:selectItem itemValue="true" itemLabel="true" />
+						        <f:selectItem itemValue="false" itemLabel="false" />
+        					</h:selectOneMenu>
+					        <h:outputText value="&nbsp;" />
+<!--					        <a4j:commandLink action="#{WSDLManager.removeChild(node)}" rerender="richTree"
+						        rendered="#{node.removable}">
+						        <h:graphicImage styleClass="minus" value="images/small/Minus.png" rendered="#{node.removable}" />
+					        </a4j:commandLink>  -->
+				        </rich:treeNode>
+				        <rich:treeNode type="group">
+					        <h:outputText value="[#{node.prototype.type}]" styleClass="tipoCampo" />
+        					<h:selectBooleanCheckbox value="#{node.notNil}" disabled="true" />
+		        			<h:outputText value="&nbsp;" />
+<!--				        	<a4j:commandLink name="Add" action="#{WSDLManager.addChild(node)}" reRender="richTree">
+						        <h:graphicImage styleClass="plus" value="images/small/Plus.png" />
+        					</a4j:commandLink>
+		        			<a4j:commandLink action="#{WSDLManager.removeChild(node)}" rerender="richTree"
+				        		rendered="#{node.removable}">
+						        <h:graphicImage styleClass="minus" value="images/small/Minus.png" rendered="#{node.removable}" />
+        					</a4j:commandLink> -->
+		        		</rich:treeNode>
+				        <rich:treeNode type="complex">
+					        <h:outputText value="#{node.type} : #{node.name} " />
+					        <h:selectBooleanCheckbox value="#{node.notNil}" disabled="#{node.notNillable}" />
+        					<h:outputText value="&nbsp;" />
+					        <h:outputText value="&nbsp;" />
+<!--					        <a4j:commandLink action="#{WSDLManager.removeChild(node)}" reRender="richTree"
+						        rendered="#{node.removable}">
+						        <h:graphicImage styleClass="minus" value="images/small/Minus.png" rendered="#{node.removable}" />
+					        </a4j:commandLink>  -->
+				        </rich:treeNode>
+				        <rich:treeNode type="Parameterized">
+					        <h:outputText value="{#{node.namespace}} " />
+					        <h:selectBooleanCheckbox value="#{node.notNil}" disabled="true" />
+				        </rich:treeNode>
+				        <rich:treeNode type="XMLGregorianCalendar">
+        					        <h:outputText value="#{node.type} : #{node.name} " styleClass="tipoCampo" />
+		        			<h:selectBooleanCheckbox id="foo2-chk" value="#{node.notNil}" disabled="#{node.notNillable}" />
+				        	<rich:calendar id="foo2" value="#{node.valueDate}" oncollapse="document.getElementById(this.id + '-chk').checked=true;return true;"
+						        popup="true"
+        						showInput="true" enableManualInput="false" />
+<!--		        			<a4j:commandLink action="#{WSDLManager.removeChild(node)}" rerender="richTree"
+				        		rendered="#{node.removable}">
+						        <h:graphicImage styleClass="minus" value="images/small/Minus.png" rendered="#{node.removable}" />
+        					</a4j:commandLink> -->
+		        		</rich:treeNode>
+				        <rich:treeNode type="Duration">
+        					<h:outputText value="#{node.type} : #{node.name} " styleClass="tipoCampo" />
+		        			<h:selectBooleanCheckbox id="foo3-chk" value="#{node.notNil}" disabled="#{node.notNillable}" />
+				        	<h:inputText id="foo3" value="#{node.value}" onfocus="document.getElementById(this.id + '-chk').checked=true"/>
+        					<h:outputText value="(MilliSeconds)" target="_blank" />
+		        			<h:outputText value="&nbsp;" />
+<!--				        	<a4j:commandLink action="#{WSDLManager.removeChild(node)}" rerender="richTree"
+						        rendered="#{node.removable}">
+        						<h:graphicImage styleClass="minus" value="images/small/Minus.png" rendered="#{node.removable}" />
+		        			</a4j:commandLink> -->
+				        </rich:treeNode>
+        				<rich:treeNode type="qname">
+		        			<h:outputText value="#{node.type} : #{node.name} " styleClass="tipoCampo" />
+				        	<h:selectBooleanCheckbox id="foo4-chk" value="#{node.notNil}" disabled="#{node.notNillable}" />
+        					<h:outputText value="nameSpace: " />
+		        			<h:inputText id="foo4" value="#{node.nameSpace}" onfocus="document.getElementById(this.id + '-chk').checked=true"/>
+				        	<h:outputText value=" localPart: " />
+        					<h:inputText value="#{node.localPart}" />
+		        			<h:outputText value="&nbsp;" />
+<!--				        	<a4j:commandLink action="#{WSDLManager.removeChild(node)}" rerender="richTree"
+						        rendered="#{node.removable}">
+        						<h:graphicImage styleClass="minus" value="images/small/Minus.png" rendered="#{node.removable}" />
+		        			</a4j:commandLink> -->
+				        </rich:treeNode>
+        				<rich:treeNode type="Enumeration">
+		        			<h:outputText value="#{node.type} : #{node.name} " styleClass="tipoCampo" />
+				        	<h:selectBooleanCheckbox id="foo5-chk" value="#{node.notNil}" disabled="#{node.notNillable}" />
+        					<h:selectOneMenu id="foo5" value="#{node.value}" onfocus="document.getElementById(this.id + '-chk').checked=true">
+		        				<f:selectItems value="#{node.validValue}" />
+				        	</h:selectOneMenu>
+        					<h:outputText value="&nbsp;" />
+<!--		        			<a4j:commandLink action="#{WSDLManager.removeChild(node)}" rerender="richTree"
+				        		rendered="#{node.removable}">
+						        <h:graphicImage styleClass="minus" value="images/small/Minus.png" rendered="#{node.removable}" />
+        					</a4j:commandLink> -->
+		        		</rich:treeNode>
+        		    </rich:tree>
+                    <a4j:commandButton value="Perform invocation" render="opSelectionPanel" action="#{clientConversationBean.performInvocation}" />
+                </h:form>
+            </rich:panel>
+            
+            </rich:accordionItem>
+            <rich:accordionItem header="Response:">
+            <rich:panel header="Parameters output" rendered="#{not empty clientConversationBean.outputTree}">
+            </rich:panel>
+            </rich:accordionItem>
+            </rich:accordion>
+            
+            </a4j:outputPanel>
+            
+            </a4j:outputPanel>
+            
+            
+            
+            
+            
+        </fieldset>
+
+    </ui:define>
+</ui:composition>
+</body>
+</html>
