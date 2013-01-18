@@ -63,7 +63,6 @@ public class ClientConversationBean implements Serializable {
     private TreeNodeImpl inputTree;
     private TreeNodeImpl outputTree;
     private UITree inTree;
-    private UITree outTree;
     
     public void init() throws ConnectException {
 	client = getClientBuilder().tmpDir("/tmp/wise").verbose(true).keepSource(true).wsdlURL(getWsdlUrl()).build();
@@ -206,14 +205,6 @@ public class ClientConversationBean implements Serializable {
 
     public void setInTree(UITree inTree) {
         this.inTree = inTree;
-    }
-
-    public UITree getOutTree() {
-        return outTree;
-    }
-
-    public void setOutTree(UITree outTree) {
-        this.outTree = outTree;
     }
 
     public TreeNodeImpl getInputTree() {

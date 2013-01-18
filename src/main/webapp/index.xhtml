@@ -16,13 +16,6 @@
     <ui:define name="body">
         <fieldset style="width:600px">
             <legend>Wise GUI</legend>
-            <p>
-                Please start by providing the WSDL URL you want to consume
-            </p>
-
-            <p>
-                The provided url will be used to retrieve a wsdl which will then be parsed to present you the available endpoints.
-            </p>
             <rich:panel header="WSDL selection">
                 <h:form id="wsdlSelection">
                     <h:outputLabel value="URL:" for="wsdlUrlInput"/>
@@ -50,20 +43,12 @@
                             </rich:panelMenuGroup>
                         </c:forEach>
                     </rich:panelMenu>
-                    <a4j:outputPanel ajaxRendered="true">
-                        <rich:panel rendered="#{not empty clientConversationBean.currentOperation}">
-                            <h:outputText value="#{clientConversationBean.currentOperation} selected" id="current" />
-                        </rich:panel>
-                    </a4j:outputPanel>
                 </h:form>
             </rich:panel>
             <br />
             <a4j:outputPanel id="parInputPanel" ajaxRendered="true">
             
-            <rich:accordion switchType="client">
-            <rich:accordionItem header="Request:">
-            
-            <rich:panel header="Parameters input" rendered="#{not empty clientConversationBean.inputTree}">
+            <rich:panel header="Request" rendered="#{not empty clientConversationBean.inputTree}">
                 <h:form id="parInput">
                     <rich:tree id="richTree" var="node" value="#{clientConversationBean.inputTree}" nodeType="#{node.kind}" 
 				switchType="ajax" binding="#{clientConversationBean.inTree}">
@@ -159,12 +144,60 @@
                 </h:form>
             </rich:panel>
             
-            </rich:accordionItem>
-            <rich:accordionItem header="Response:">
-            <rich:panel header="Parameters output" rendered="#{not empty clientConversationBean.outputTree}">
+            <br />
+            <a4j:outputPanel id="resultPanel" ajaxRendered="true">
+            
+            <rich:panel header="Response" rendered="#{not empty clientConversationBean.outputTree}">
+                <h:form id="resForm">
+                    <rich:tree id="richResTree" var="node" value="#{clientConversationBean.outputTree}" nodeType="#{node.kind}" switchType="ajax">
+				        <rich:treeNode type="simple">
+        					<h:outputText value="#{node.type} : #{node.name} = #{node.shortValue}"
+        						rendered="#{node.notNil}" />
+        					<h:outputText value="#{node.type} : #{node.name} = ***NIL***" rendered="#{node.nil}" />
+<!--		        			<h:graphicImage styleClass="plus" value="images/small/ZoomIn.png" rendered="#{node.notNil}"
+				        		onclick="pippo = '#{node.longValue}'; document.getElementById('detailForm:detailArea').value = decode64(unescape(pippo)); showObj('detailDiv');" /> -->
+        				</rich:treeNode>
+		        		<rich:treeNode type="qname">
+				        	<h:outputText value="#{node.type} : #{node.name} = #{node.shortValue}"
+						        rendered="#{node.notNil}" />
+        					<h:outputText value="#{node.type} : #{node.name} = ***NIL***" rendered="#{node.nil}" />
+<!--		        			<h:graphicImage styleClass="plus" value="images/small/ZoomIn.png" rendered="#{node.notNil}"
+				        		onclick="pippo = '#{node.longValue}'; document.getElementById('detailForm:detailArea').value = decode64(unescape(pippo)); showObj('detailDiv');" /> -->
+        				</rich:treeNode>
+		        		<rich:treeNode type="Duration">
+				        	<h:outputText value="#{node.type} : #{node.name} = #{node.shortValue}"
+						        rendered="#{node.notNil}" />
+        					<h:outputText value="#{node.type} : #{node.name} = ***NIL***" rendered="#{node.nil}" />
+<!--		        			<h:graphicImage styleClass="plus" value="images/small/ZoomIn.png" rendered="#{node.notNil}"
+				        		onclick="pippo = '#{node.longValue}'; document.getElementById('detailForm:detailArea').value = decode64(unescape(pippo)); showObj('detailDiv');" /> -->
+        				</rich:treeNode>
+		        		<rich:treeNode type="XMLGregorianCalendar">
+				        	<h:outputText value="#{node.type} : #{node.name} = #{node.shortValue}"
+						        rendered="#{node.notNil}" />
+        					<h:outputText value="#{node.type} : #{node.name} = ***NIL***" rendered="#{node.nil}" />
+<!--		        			<h:graphicImage styleClass="plus" value="images/small/ZoomIn.png" rendered="#{node.notNil}"
+				        		onclick="pippo = '#{node.longValue}'; document.getElementById('detailForm:detailArea').value = decode64(unescape(pippo)); showObj('detailDiv');" /> -->
+        				</rich:treeNode>
+		        		<rich:treeNode type="Enumeration">
+				        	<h:outputText value="#{node.type} : #{node.name} = #{node.shortValue}"
+						        rendered="#{node.notNil}" />
+        					<h:outputText value="#{node.type} : #{node.name} = ***NIL***" rendered="#{node.nil}" />
+<!--		        			<h:graphicImage styleClass="plus" value="images/small/ZoomIn.png" rendered="#{node.notNil}"
+				        		onclick="pippo = '#{node.longValue}'; document.getElementById('detailForm:detailArea').value = decode64(unescape(pippo)); showObj('detailDiv');" /> -->
+        				</rich:treeNode>
+		        		<rich:treeNode type="Parameterized">
+				        	<h:outputText value="{#{node.namespace}}" />
+        				</rich:treeNode>
+		        		<rich:treeNode type="group">
+				        	<h:outputText value="#{node.prototype.type}[#{node.size}]" />
+        				</rich:treeNode>
+		        		<rich:treeNode type="complex">
+				        	<h:outputText value="#{node.type} : #{node.name}" />
+        				</rich:treeNode>
+		        	</rich:tree>
+                </h:form>
             </rich:panel>
-            </rich:accordionItem>
-            </rich:accordion>
+            </a4j:outputPanel>
             
             </a4j:outputPanel>
             
