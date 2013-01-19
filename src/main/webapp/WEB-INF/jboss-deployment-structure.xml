@@ -1,0 +1,9 @@
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.1">
+    <deployment>
+        <dependencies>
+	      <module name="org.jboss.ws.cxf.jbossws-cxf-client" services="true" export="true"/>
+	      <module name="org.apache.cxf.impl"/> <!-- TODO replace this and previous dependency with commented one below when removing explicit dep on wise-core-cxf -->
+	      <!-- <module name="org.jboss.ws.jaxws-client" services="true" export="true"/> -->
+	    </dependencies>
+    </deployment>
+</jboss-deployment-structure>

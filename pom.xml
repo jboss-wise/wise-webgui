@@ -83,6 +83,28 @@
               <groupId>org.jboss.wise</groupId>
               <artifactId>wise-core-cxf</artifactId>
               <version>${version.wise.core}</version>
+              <exclusions>
+                  <exclusion>
+                      <groupId>org.jboss.ws</groupId>
+                      <artifactId>jbossws-common</artifactId>
+                  </exclusion>
+                  <exclusion>
+                      <groupId>org.jboss.ws</groupId>
+                      <artifactId>jbossws-spi</artifactId>
+                  </exclusion>
+                  <exclusion>
+                      <groupId>org.jboss.ws.cxf</groupId>
+                      <artifactId>jbossws-cxf-client</artifactId>
+                  </exclusion>
+                  <exclusion>
+                      <groupId>xalan</groupId>
+                      <artifactId>xalan</artifactId>
+                  </exclusion>
+                  <exclusion>
+                      <groupId>wsdl4j</groupId>
+                      <artifactId>wsdl4j</artifactId>
+                  </exclusion>
+              </exclusions>
          </dependency>
 
       </dependencies>
@@ -122,9 +144,17 @@
          <artifactId>richfaces-components-ui</artifactId>
       </dependency>
       
+      <!-- TODO replace with org.jboss.wise:wise-core -->
       <dependency>
          <groupId>org.jboss.wise</groupId>
          <artifactId>wise-core-cxf</artifactId>
+      </dependency>
+      
+      <dependency>
+         <groupId>org.jboss.logging</groupId>
+         <artifactId>jboss-logging</artifactId>
+         <scope>provided</scope>
+         <version>3.1.0.GA</version>
       </dependency>
 
    </dependencies>
