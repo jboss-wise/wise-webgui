@@ -49,6 +49,15 @@ public class CleanupTask<T> {
 	}
     }
     
+    public synchronized void refsCleanupNoChecks() {
+	for (Iterator<Entry<Long, Holder<T>>> it = refs.entrySet().iterator(); it.hasNext(); ) {
+	    Entry<Long, Holder<T>> entry = it.next();
+	    Holder<T> h = entry.getValue();
+	    h.getCallback().cleanup(h.getData());
+	    it.remove();
+	}
+    }
+    
     public synchronized void removeRef(T obj) {
 	boolean done = false;
 	final Holder<T> r = new Holder<T>(obj);

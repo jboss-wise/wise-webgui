@@ -19,6 +19,7 @@ package org.jboss.wise.gui;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.annotation.PreDestroy;
 import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
@@ -34,6 +35,15 @@ public class CleanupHelper {
 	synchronized (tasks) {
 	    for (CleanupTask<?> task : tasks) {
 		task.refsCleanup();
+	    }
+	}
+    }
+    
+    @PreDestroy
+    public void cleanup() {
+	synchronized (tasks) {
+	    for (CleanupTask<?> task : tasks) {
+		task.refsCleanupNoChecks();
 	    }
 	}
     }
