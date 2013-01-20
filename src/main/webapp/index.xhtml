@@ -20,7 +20,7 @@
                 <h:form id="wsdlSelection">
                     <h:outputLabel value="URL:" for="wsdlUrlInput"/>
                     <h:inputText id="wsdlUrlInput" value="#{clientConversationBean.wsdlUrl}" />
-                    <a4j:commandButton value="OK" render="opSelectionPanel" action="#{clientConversationBean.init}" />
+                    <a4j:commandButton value="OK" render="opSelectionPanel" action="#{clientConversationBean.readWsdl}" />
                 </h:form>
             </rich:panel>
             <br />

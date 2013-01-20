@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.StringTokenizer;
 
+import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
@@ -52,8 +53,10 @@ import org.richfaces.model.TreeNodeImpl;
 public class ClientConversationBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    
+
+    private static final int CONVERSATION_TIMEOUT = 15 * 60 * 1000; //15 mins instead of default 30 mins
     private static WSDynamicClientBuilder clientBuilder;
+    private static CleanupTask<WSDynamicClient> cleanupTask = new CleanupTask<WSDynamicClient>(true);
     
     @Inject Conversation conversation;
     private WSDynamicClient client;
@@ -64,9 +67,25 @@ public class ClientConversationBean implements Serializable {
     private TreeNodeImpl outputTree;
     private UITree inTree;
     
-    public void init() throws ConnectException {
-	client = getClientBuilder().tmpDir("/tmp/wise").verbose(true).keepSource(true).wsdlURL(getWsdlUrl()).build();
-	conversation.begin(); //TODO!!!
+    @PostConstruct
+    public void init() {
+	//this is called each time a new browser tab is used and whenever the conversation expires (hence a new bean is created)
+	conversation.begin();
+	conversation.setTimeout(CONVERSATION_TIMEOUT);
+    }
+    
+    public void readWsdl() throws ConnectException {
+	cleanup();
+	//restart conversation
+	conversation.end();
+	conversation.begin();
+	client = getClientBuilder().tmpDir("/tmp/wise").verbose(true).keepSource(true).wsdlURL(getWsdlUrl()).maxThreadPoolSize(1).build();
+	cleanupTask.addRef(client, System.currentTimeMillis() + CONVERSATION_TIMEOUT, new CleanupTask.CleanupCallback<WSDynamicClient>() {
+	    @Override
+	    public void cleanup(WSDynamicClient data) {
+		data.close();
+	    }
+	});
 	
 	services = convertServicesToGui(client.processServices());
     }
@@ -164,16 +183,25 @@ public class ClientConversationBean implements Serializable {
 	return services;
     }
     
-    public void close() {
-	conversation.end(); //TODO!!!
-	if (client != null) {
-	    client.close();
-	}
-    }
-    
     public void updateCurrentOperation(ItemChangeEvent event){
 	  setCurrentOperation(event.getNewItemName());
 	}
+    
+    private void cleanup() {
+	if (client != null) {
+	    cleanupTask.removeRef(client);
+    	    client.close();
+    	    client = null;
+	}
+	services = null;
+	currentOperation = null;
+	inputTree = null;
+	outputTree = null;
+	if (inTree != null) {
+	    inTree.clearInitialState();
+	}
+	inputTree = null;
+    }
     
     public String getWsdlUrl() {
         return wsdlUrl;

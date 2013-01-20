@@ -133,6 +133,12 @@
          <scope>provided</scope>
       </dependency>
 
+      <dependency>
+         <groupId>org.jboss.spec.javax.ejb</groupId>
+         <artifactId>jboss-ejb-api_3.1_spec</artifactId>
+         <scope>provided</scope>
+      </dependency>
+      
       <!-- Import the RichFaces core library -->
       <dependency>
          <groupId>org.richfaces.core</groupId>
