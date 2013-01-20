@@ -79,7 +79,7 @@ public class ClientConversationBean implements Serializable {
 	//restart conversation
 	conversation.end();
 	conversation.begin();
-	client = getClientBuilder().tmpDir("/tmp/wise").verbose(true).keepSource(true).wsdlURL(getWsdlUrl()).maxThreadPoolSize(1).build();
+	client = getClientBuilder().verbose(true).keepSource(true).wsdlURL(getWsdlUrl()).maxThreadPoolSize(1).build();
 	cleanupTask.addRef(client, System.currentTimeMillis() + CONVERSATION_TIMEOUT, new CleanupTask.CleanupCallback<WSDynamicClient>() {
 	    @Override
 	    public void cleanup(WSDynamicClient data) {

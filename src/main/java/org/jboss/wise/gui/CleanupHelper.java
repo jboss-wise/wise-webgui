@@ -29,9 +29,8 @@ public class CleanupHelper {
 
     private static List<CleanupTask<?>> tasks = new LinkedList<CleanupTask<?>>();
     
-    @Schedule(second = "*/30", minute = "*/1", hour = "*", persistent = false)
+    @Schedule(minute = "*/3", hour = "*", persistent = false) //every 3 minutes
     public void foo() {
-	System.out.println("TICK TACK");
 	synchronized (tasks) {
 	    for (CleanupTask<?> task : tasks) {
 		task.refsCleanup();

@@ -59,7 +59,6 @@ public class CleanupTask<T> {
 		it.remove();
 		done = true;
 	    }
-	    System.out.println("------------> REMOVED (2)");
 	}
     }
     
