@@ -16,9 +16,14 @@
  */
 package org.jboss.wise.gui.treeElement;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.util.Iterator;
+import java.util.List;
 
+import javax.xml.bind.annotation.XmlElementDecl;
+
+import org.jboss.logging.Logger;
 import org.jboss.wise.core.client.WSDynamicClient;
 import org.jboss.wise.core.exception.WiseRuntimeException;
 import org.jboss.wise.core.utils.IDGenerator;
@@ -75,11 +80,42 @@ public class ParameterizedWiseTreeElement extends WiseTreeElement {
 
     @Override
     public Object toObject() throws WiseRuntimeException {
-	return null;
-//	if (client == null) {
-//	    throw new WiseRuntimeException("null client: impossible conversion of ParameterizedWiseTreeElemnt to object");
-//	}
-//	return isLeaf() ? null : client.instanceXmlElementDecl(this.name, this.scope, this.namespace, this.getChildrenAsList().get(0).toObject());
+	return isLeaf() ? null : instanceXmlElementDecl(this.name, this.scope, this.namespace, ((WiseTreeElement) this.getChild(this.getChildrenKeysIterator().next())).toObject());
+    }
+    
+    private Object instanceXmlElementDecl(String name, Class<?> scope, String namespace, Object value) {
+	try {
+	    Class<?> objectFactoryClass = null;
+	    Method methodToUse = null;
+	    boolean done = false;
+	    List<Class<?>> objectFactories = client.getObjectFactories();
+	    if (objectFactories != null) {
+		for (Iterator<Class<?>> it = objectFactories.iterator(); it.hasNext() && !done; ) {
+		    objectFactoryClass = it.next();
+		    Method[] methods = objectFactoryClass.getMethods();
+		    for (int i = 0; i < methods.length; i++) {
+			XmlElementDecl annotation = methods[i].getAnnotation(XmlElementDecl.class);
+			if (annotation != null && name.equals(annotation.name()) && (annotation.namespace() == null || annotation.namespace().equals(namespace)) && (annotation
+				.scope() == null || annotation.scope().equals(scope))) {
+			    methodToUse = methods[i];
+			    break;
+			}
+		    }
+		    if (methodToUse != null) {
+			done = true;
+		    }
+		}
+	    }
+	    if (methodToUse != null) {
+		Object obj = objectFactoryClass.newInstance();
+		Logger.getLogger(this.getClass()).debug(methodToUse + " with value=" + value);
+		return methodToUse.invoke(obj, new Object[] { value });
+	    } else {
+		return null;
+	    }
+	} catch (Exception e) {
+	    throw new WiseRuntimeException(e);
+	}
     }
 
     public void setClient(WSDynamicClient client) {
