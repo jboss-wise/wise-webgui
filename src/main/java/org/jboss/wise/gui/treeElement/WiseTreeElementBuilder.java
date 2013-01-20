@@ -92,7 +92,7 @@ public class WiseTreeElementBuilder {
 	    throw new WiseRuntimeException("Converter doesn't support this Object[] yet.");
 	}
 
-	if (cl.isEnum() || cl.isPrimitive() || cl.getName().equals(String.class.getName())) { // || !cl.getPackage().getName().equals(WSDynamicClient.WISE_TARGET_PACKAGE)) { //TODO ???
+	if (cl.isEnum() || cl.isPrimitive() || client.getClassLoader() != cl.getClassLoader()) {
 	    Logger.getLogger(this.getClass()).debug("* simple");
 	    SimpleWiseTreeElement element = SimpleWiseTreeElementFactory.create(cl, name);
 	    element.parseObject(obj);

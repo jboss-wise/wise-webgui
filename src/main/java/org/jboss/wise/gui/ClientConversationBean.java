@@ -96,7 +96,7 @@ public class ClientConversationBean implements Serializable {
 	String portName = st.nextToken();
 	String operationName = st.nextToken();
 	try {
-	    inputTree = convertOperationParametersToGui(client.getWSMethod(serviceName, portName, operationName));
+	    inputTree = convertOperationParametersToGui(client.getWSMethod(serviceName, portName, operationName), client);
 	} catch (Exception e) {
 	    throw new RuntimeException(e);
 	}
@@ -114,30 +114,30 @@ public class ClientConversationBean implements Serializable {
 		WiseTreeElement wte = (WiseTreeElement)inputTree.getChild(it.next());
 		params.put(wte.getName(), wte.toObject());
 	    }
-	    outputTree = convertOperationResultToGui(wsMethod.invoke(params));
+	    outputTree = convertOperationResultToGui(wsMethod.invoke(params), client);
 	} catch (Exception e) {
 	    throw new RuntimeException(e);
 	}
 	
     }
     
-    private static TreeNodeImpl convertOperationParametersToGui(WSMethod wsMethod) {
+    private static TreeNodeImpl convertOperationParametersToGui(WSMethod wsMethod, WSDynamicClient client) {
 	WiseTreeElementBuilder builder = new WiseTreeElementBuilder();
 	TreeNodeImpl rootElement = new TreeNodeImpl();
 	Collection<? extends WebParameter> parameters = wsMethod.getWebParams().values();
 	for (WebParameter parameter : parameters) {
-	    WiseTreeElement wte = builder.buildTreeFromType(parameter.getType(), parameter.getName(), null); //TODO client for parameterized types...
+	    WiseTreeElement wte = builder.buildTreeFromType(parameter.getType(), parameter.getName(), client);
 	    rootElement.addChild(wte.getId(), wte);
 	}
 	return rootElement;
     }
     
-    private static TreeNodeImpl convertOperationResultToGui(InvocationResult result) {
+    private static TreeNodeImpl convertOperationResultToGui(InvocationResult result,  WSDynamicClient client) {
 	WiseTreeElementBuilder builder = new WiseTreeElementBuilder();
 	TreeNodeImpl rootElement = new TreeNodeImpl();
 	for (Entry<String, Object> res : result.getResult().entrySet()) {
 	    Object resObj = res.getValue();
-	    WiseTreeElement wte = builder.buildTreeFromType(resObj.getClass(), res.getKey(), null, resObj); //TODO client for parameterized types...
+	    WiseTreeElement wte = builder.buildTreeFromType(resObj.getClass(), res.getKey(), client, resObj);
 	    rootElement.addChild(wte.getId(), wte);
 	}
 	return rootElement;
