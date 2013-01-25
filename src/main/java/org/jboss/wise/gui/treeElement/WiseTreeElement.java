@@ -38,6 +38,7 @@ public abstract class WiseTreeElement extends TreeNodeImpl implements TreeNode, 
     public static final String DURATION = "Duration";
     public static final String ENUMERATION = "Enumeration";
     public static final String GROUP = "group";
+    public static final String LAZY = "lazy";
     public static final String PARAMETERIZED = "Parameterized";
     public static final String QNAME = "qname";
     public static final String ROOT = "root";
@@ -50,7 +51,7 @@ public abstract class WiseTreeElement extends TreeNodeImpl implements TreeNode, 
     protected boolean nil; //whether this elements has the attribute xsi:nil set to "true"
     protected boolean nillable = true; //for primitives and explicitly not nillable elements
     private boolean removable = false; // to be used on array elements
-
+    
     protected Type classType;
 
     protected WiseTreeElement() {

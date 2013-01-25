@@ -122,22 +122,22 @@ public class ClientConversationBean implements Serializable {
     }
     
     private static TreeNodeImpl convertOperationParametersToGui(WSMethod wsMethod, WSDynamicClient client) {
-	WiseTreeElementBuilder builder = new WiseTreeElementBuilder();
+	WiseTreeElementBuilder builder = new WiseTreeElementBuilder(client);
 	TreeNodeImpl rootElement = new TreeNodeImpl();
 	Collection<? extends WebParameter> parameters = wsMethod.getWebParams().values();
 	for (WebParameter parameter : parameters) {
-	    WiseTreeElement wte = builder.buildTreeFromType(parameter.getType(), parameter.getName(), client);
+	    WiseTreeElement wte = builder.buildTreeFromType(parameter.getType(), parameter.getName());
 	    rootElement.addChild(wte.getId(), wte);
 	}
 	return rootElement;
     }
     
     private static TreeNodeImpl convertOperationResultToGui(InvocationResult result,  WSDynamicClient client) {
-	WiseTreeElementBuilder builder = new WiseTreeElementBuilder();
+	WiseTreeElementBuilder builder = new WiseTreeElementBuilder(client);
 	TreeNodeImpl rootElement = new TreeNodeImpl();
 	for (Entry<String, Object> res : result.getResult().entrySet()) {
 	    Object resObj = res.getValue();
-	    WiseTreeElement wte = builder.buildTreeFromType(resObj.getClass(), res.getKey(), client, resObj);
+	    WiseTreeElement wte = builder.buildTreeFromType(resObj.getClass(), res.getKey(), resObj);
 	    rootElement.addChild(wte.getId(), wte);
 	}
 	return rootElement;
