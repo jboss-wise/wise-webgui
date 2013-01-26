@@ -42,6 +42,7 @@ import org.jboss.wise.core.client.WSService;
 import org.jboss.wise.core.client.WebParameter;
 import org.jboss.wise.core.client.builder.WSDynamicClientBuilder;
 import org.jboss.wise.core.client.factories.WSDynamicClientFactory;
+import org.jboss.wise.gui.treeElement.GroupWiseTreeElement;
 import org.jboss.wise.gui.treeElement.WiseTreeElement;
 import org.jboss.wise.gui.treeElement.WiseTreeElementBuilder;
 import org.richfaces.component.UITree;
@@ -100,6 +101,7 @@ public class ClientConversationBean implements Serializable {
 	} catch (Exception e) {
 	    throw new RuntimeException(e);
 	}
+	outputTree = null;
     }
     
     public void performInvocation() {
@@ -118,7 +120,22 @@ public class ClientConversationBean implements Serializable {
 	} catch (Exception e) {
 	    throw new RuntimeException(e);
 	}
-	
+    }
+    
+    public void addChild(GroupWiseTreeElement el) {
+	try {
+	    el.incrementChildren();
+	} catch (Exception e) {
+	    throw new RuntimeException(e);
+	}
+    }
+    
+    public void removeChild(WiseTreeElement el) {
+	try {
+	    ((GroupWiseTreeElement)el.getParent()).removeChild(el.getId());
+	} catch (Exception e) {
+	    throw new RuntimeException(e);
+	}
     }
     
     private static TreeNodeImpl convertOperationParametersToGui(WSMethod wsMethod, WSDynamicClient client) {

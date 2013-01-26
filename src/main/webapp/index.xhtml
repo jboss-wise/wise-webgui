@@ -60,33 +60,31 @@
         						<f:selectItem itemValue="true" itemLabel="true" />
 						        <f:selectItem itemValue="false" itemLabel="false" />
         					</h:selectOneMenu>
-					        <h:outputText value="&nbsp;" />
-<!--					        <a4j:commandLink action="#{WSDLManager.removeChild(node)}" rerender="richTree"
-						        rendered="#{node.removable}">
-						        <h:graphicImage styleClass="minus" value="images/small/Minus.png" rendered="#{node.removable}" />
-					        </a4j:commandLink>  -->
+					        <a4j:commandLink action="#{clientConversationBean.removeChild(node)}" rerender="richTree" rendered="#{node.removable}">
+				        		Remove
+        					</a4j:commandLink>
 				        </rich:treeNode>
 				        <rich:treeNode type="group">
 					        <h:outputText value="[#{node.prototype.type}]" styleClass="tipoCampo" />
         					<h:selectBooleanCheckbox value="#{node.notNil}" disabled="true" />
 		        			<h:outputText value="&nbsp;" />
-<!--				        	<a4j:commandLink name="Add" action="#{WSDLManager.addChild(node)}" reRender="richTree">
-						        <h:graphicImage styleClass="plus" value="images/small/Plus.png" />
+		        			<a4j:commandLink name="Add" action="#{clientConversationBean.addChild(node)}" reRender="richTree">
+						        Add
+<!--						        <h:graphicImage styleClass="plus" value="images/small/Plus.png" />   -->
         					</a4j:commandLink>
-		        			<a4j:commandLink action="#{WSDLManager.removeChild(node)}" rerender="richTree"
-				        		rendered="#{node.removable}">
-						        <h:graphicImage styleClass="minus" value="images/small/Minus.png" rendered="#{node.removable}" />
-        					</a4j:commandLink> -->
+        					<a4j:commandLink action="#{clientConversationBean.removeChild(node)}" rerender="richTree" rendered="#{node.removable}">
+				        		Remove
+<!--						        <h:graphicImage styleClass="minus" value="images/small/Minus.png" rendered="#{node.removable}" />    -->
+        					</a4j:commandLink>
 		        		</rich:treeNode>
 				        <rich:treeNode type="complex">
 					        <h:outputText value="#{node.type} : #{node.name} " />
 					        <h:selectBooleanCheckbox value="#{node.notNil}" disabled="#{node.notNillable}" />
         					<h:outputText value="&nbsp;" />
 					        <h:outputText value="&nbsp;" />
-<!--					        <a4j:commandLink action="#{WSDLManager.removeChild(node)}" reRender="richTree"
-						        rendered="#{node.removable}">
-						        <h:graphicImage styleClass="minus" value="images/small/Minus.png" rendered="#{node.removable}" />
-					        </a4j:commandLink>  -->
+					        <a4j:commandLink action="#{clientConversationBean.removeChild(node)}" rerender="richTree" rendered="#{node.removable}">
+				        		Remove
+        					</a4j:commandLink>
 				        </rich:treeNode>
 				        <rich:treeNode type="Parameterized">
 					        <h:outputText value="{#{node.namespace}} " />
@@ -98,10 +96,9 @@
 				        	<rich:calendar id="foo2" value="#{node.valueDate}" oncollapse="document.getElementById(this.id + '-chk').checked=true;return true;"
 						        popup="true"
         						showInput="true" enableManualInput="false" />
-<!--		        			<a4j:commandLink action="#{WSDLManager.removeChild(node)}" rerender="richTree"
-				        		rendered="#{node.removable}">
-						        <h:graphicImage styleClass="minus" value="images/small/Minus.png" rendered="#{node.removable}" />
-        					</a4j:commandLink> -->
+        					<a4j:commandLink action="#{clientConversationBean.removeChild(node)}" rerender="richTree" rendered="#{node.removable}">
+				        		Remove
+        					</a4j:commandLink>
 		        		</rich:treeNode>
 				        <rich:treeNode type="Duration">
         					<h:outputText value="#{node.type} : #{node.name} " styleClass="tipoCampo" />
@@ -109,10 +106,9 @@
 				        	<h:inputText id="foo3" value="#{node.value}" onfocus="document.getElementById(this.id + '-chk').checked=true"/>
         					<h:outputText value="(MilliSeconds)" target="_blank" />
 		        			<h:outputText value="&nbsp;" />
-<!--				        	<a4j:commandLink action="#{WSDLManager.removeChild(node)}" rerender="richTree"
-						        rendered="#{node.removable}">
-        						<h:graphicImage styleClass="minus" value="images/small/Minus.png" rendered="#{node.removable}" />
-		        			</a4j:commandLink> -->
+		        			<a4j:commandLink action="#{clientConversationBean.removeChild(node)}" rerender="richTree" rendered="#{node.removable}">
+				        		Remove
+        					</a4j:commandLink>
 				        </rich:treeNode>
         				<rich:treeNode type="qname">
 		        			<h:outputText value="#{node.type} : #{node.name} " styleClass="tipoCampo" />
@@ -122,10 +118,9 @@
 				        	<h:outputText value=" localPart: " />
         					<h:inputText value="#{node.localPart}" />
 		        			<h:outputText value="&nbsp;" />
-<!--				        	<a4j:commandLink action="#{WSDLManager.removeChild(node)}" rerender="richTree"
-						        rendered="#{node.removable}">
-        						<h:graphicImage styleClass="minus" value="images/small/Minus.png" rendered="#{node.removable}" />
-		        			</a4j:commandLink> -->
+		        			<a4j:commandLink action="#{clientConversationBean.removeChild(node)}" rerender="richTree" rendered="#{node.removable}">
+				        		Remove
+        					</a4j:commandLink>
 				        </rich:treeNode>
         				<rich:treeNode type="Enumeration">
 		        			<h:outputText value="#{node.type} : #{node.name} " styleClass="tipoCampo" />
@@ -134,13 +129,12 @@
 		        				<f:selectItems value="#{node.validValue}" />
 				        	</h:selectOneMenu>
         					<h:outputText value="&nbsp;" />
-<!--		        			<a4j:commandLink action="#{WSDLManager.removeChild(node)}" rerender="richTree"
-				        		rendered="#{node.removable}">
-						        <h:graphicImage styleClass="minus" value="images/small/Minus.png" rendered="#{node.removable}" />
-        					</a4j:commandLink> -->
+        					<a4j:commandLink action="#{clientConversationBean.removeChild(node)}" rerender="richTree" rendered="#{node.removable}">
+				        		Remove
+        					</a4j:commandLink>
 		        		</rich:treeNode>
         		    </rich:tree>
-                    <a4j:commandButton value="Perform invocation" render="opSelectionPanel" action="#{clientConversationBean.performInvocation}" />
+                    <a4j:commandButton value="Perform invocation" render="opSelectionPanel" rerender="opSelectionPanel" action="#{clientConversationBean.performInvocation}" />
                 </h:form>
             </rich:panel>
             

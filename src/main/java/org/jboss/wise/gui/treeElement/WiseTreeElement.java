@@ -52,6 +52,8 @@ public abstract class WiseTreeElement extends TreeNodeImpl implements TreeNode, 
     protected boolean nillable = true; //for primitives and explicitly not nillable elements
     private boolean removable = false; // to be used on array elements
     
+    private WiseTreeElement parent;
+    
     protected Type classType;
 
     protected WiseTreeElement() {
@@ -136,11 +138,40 @@ public abstract class WiseTreeElement extends TreeNodeImpl implements TreeNode, 
 	} else {
 	    return ((Class<?>) this.classType).getSimpleName();
 	}
+    }
 
+    public WiseTreeElement getParent() {
+        return parent;
+    }
+
+    public void setParent(WiseTreeElement parent) {
+        this.parent = parent;
     }
 
     /** ** Abstract method *** */
 
+    public void addChild(Object key, TreeNode child) {
+	super.addChild(key, child);
+	if (child instanceof WiseTreeElement) {
+	    ((WiseTreeElement)child).setParent(this);
+	}
+    }
+
+    public void insertChild(int idx, Object key, TreeNode child) {
+	super.insertChild(idx, key, child);
+	if (child instanceof WiseTreeElement) {
+	    ((WiseTreeElement)child).setParent(this);
+	}
+    }
+
+    public void removeChild(Object key) {
+	TreeNode child = getChild(key);
+	if (child instanceof WiseTreeElement) {
+	    ((WiseTreeElement)child).setParent(null);
+	}
+	super.removeChild(key);
+    }
+    
     /**
      * Every WiseTreeElement must be cloneable; this is required to handle
      * element's add and removal into/from arrays and collections.
