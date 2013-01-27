@@ -110,7 +110,6 @@ public class SimpleWiseTreeElement extends WiseTreeElement {
 	element.setName(this.name);
 	element.setNil(this.nil);
 	element.setClassType(this.classType);
-	element.setValue(this.value);
 	element.setRemovable(this.isRemovable());
 	element.setNillable(this.isNillable());
 	return element;

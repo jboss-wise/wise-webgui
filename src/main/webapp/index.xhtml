@@ -77,6 +77,13 @@
 <!--						        <h:graphicImage styleClass="minus" value="images/small/Minus.png" rendered="#{node.removable}" />    -->
         					</a4j:commandLink>
 		        		</rich:treeNode>
+				        <rich:treeNode type="lazy">
+				            <h:outputText value="#{node.type} ..." />
+		        			<h:outputText value="&nbsp;" />
+		        			<a4j:commandLink name="Load" action="#{clientConversationBean.lazyLoadChild(node)}" reRender="richTree" rendered="#{not node.resolved}">
+						        load
+        					</a4j:commandLink>
+		        		</rich:treeNode>
 				        <rich:treeNode type="complex">
 					        <h:outputText value="#{node.type} : #{node.name} " />
 					        <h:selectBooleanCheckbox value="#{node.notNil}" disabled="#{node.notNillable}" />

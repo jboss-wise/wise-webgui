@@ -67,6 +67,7 @@ public class LazyLoadWiseTreeElement extends WiseTreeElement {
 	if (!isResolved()) {
 	    WiseTreeElement ref = treeTypesMap.get(this.classType);
             WiseTreeElement component = (WiseTreeElement) ref.clone();
+            component.setName(this.getName());
             addChild(component.getId(), component);
             setResolved(true);
 	}
