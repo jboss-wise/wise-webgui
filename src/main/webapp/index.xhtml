@@ -54,8 +54,12 @@
 				switchType="ajax" binding="#{clientConversationBean.inTree}">
 				        <rich:treeNode type="simple">
 				        	<h:outputText value="#{node.type} : #{node.name} " />
-					        <h:selectBooleanCheckbox id="foo-chk" value="#{node.notNil}" disabled="#{node.notNillable}" />
-					        <h:inputText value="#{node.value}" id="foo" label="" rendered="#{node.type!='boolean' and node.type!='Boolean'}" columns="10" onfocus="document.getElementById(this.id + '-chk').checked=true" />
+					        <h:selectBooleanCheckbox id="foo-chk" value="#{node.notNil}" disabled="#{node.notNillable}" >
+					           <f:ajax />
+					        </h:selectBooleanCheckbox>
+					        <h:inputText value="#{node.value}" id="foo" label="" rendered="#{node.type!='boolean' and node.type!='Boolean'}" columns="10"  >
+					           <f:ajax event="valueChange" render="foo-chk" listener="#{clientConversationBean.onInputTextFocus(node)}" />
+					        </h:inputText>
 					        <h:selectOneMenu value="#{node.value}" rendered="#{node.type=='boolean' or node.type=='Boolean'}">
         						<f:selectItem itemValue="true" itemLabel="true" />
 						        <f:selectItem itemValue="false" itemLabel="false" />
@@ -86,9 +90,10 @@
 		        		</rich:treeNode>
 				        <rich:treeNode type="complex">
 					        <h:outputText value="#{node.type} : #{node.name} " />
-					        <h:selectBooleanCheckbox value="#{node.notNil}" disabled="#{node.notNillable}" />
-        					<h:outputText value="&nbsp;" />
-					        <h:outputText value="&nbsp;" />
+					        <h:selectBooleanCheckbox value="#{node.notNil}" disabled="#{node.notNillable}" >
+					           <f:ajax />
+					        </h:selectBooleanCheckbox>
+        					<h:outputText value="&nbsp;&nbsp;" />
 					        <a4j:commandLink action="#{clientConversationBean.removeChild(node)}" rerender="richTree" rendered="#{node.removable}">
 				        		Remove
         					</a4j:commandLink>
@@ -99,7 +104,9 @@
 				        </rich:treeNode>
 				        <rich:treeNode type="XMLGregorianCalendar">
         					        <h:outputText value="#{node.type} : #{node.name} " styleClass="tipoCampo" />
-		        			<h:selectBooleanCheckbox id="foo2-chk" value="#{node.notNil}" disabled="#{node.notNillable}" />
+		        			<h:selectBooleanCheckbox id="foo2-chk" value="#{node.notNil}" disabled="#{node.notNillable}" >
+		        			   <f:ajax />
+					        </h:selectBooleanCheckbox>
 				        	<rich:calendar id="foo2" value="#{node.valueDate}" oncollapse="document.getElementById(this.id + '-chk').checked=true;return true;"
 						        popup="true"
         						showInput="true" enableManualInput="false" />
@@ -109,7 +116,9 @@
 		        		</rich:treeNode>
 				        <rich:treeNode type="Duration">
         					<h:outputText value="#{node.type} : #{node.name} " styleClass="tipoCampo" />
-		        			<h:selectBooleanCheckbox id="foo3-chk" value="#{node.notNil}" disabled="#{node.notNillable}" />
+		        			<h:selectBooleanCheckbox id="foo3-chk" value="#{node.notNil}" disabled="#{node.notNillable}" >
+		        			   <f:ajax />
+					        </h:selectBooleanCheckbox>
 				        	<h:inputText id="foo3" value="#{node.value}" onfocus="document.getElementById(this.id + '-chk').checked=true"/>
         					<h:outputText value="(MilliSeconds)" target="_blank" />
 		        			<h:outputText value="&nbsp;" />
@@ -119,7 +128,9 @@
 				        </rich:treeNode>
         				<rich:treeNode type="qname">
 		        			<h:outputText value="#{node.type} : #{node.name} " styleClass="tipoCampo" />
-				        	<h:selectBooleanCheckbox id="foo4-chk" value="#{node.notNil}" disabled="#{node.notNillable}" />
+				        	<h:selectBooleanCheckbox id="foo4-chk" value="#{node.notNil}" disabled="#{node.notNillable}" >
+				        	   <f:ajax />
+					        </h:selectBooleanCheckbox>
         					<h:outputText value="nameSpace: " />
 		        			<h:inputText id="foo4" value="#{node.nameSpace}" onfocus="document.getElementById(this.id + '-chk').checked=true"/>
 				        	<h:outputText value=" localPart: " />
@@ -131,7 +142,9 @@
 				        </rich:treeNode>
         				<rich:treeNode type="Enumeration">
 		        			<h:outputText value="#{node.type} : #{node.name} " styleClass="tipoCampo" />
-				        	<h:selectBooleanCheckbox id="foo5-chk" value="#{node.notNil}" disabled="#{node.notNillable}" />
+				        	<h:selectBooleanCheckbox id="foo5-chk" value="#{node.notNil}" disabled="#{node.notNillable}" >
+				        	   <f:ajax />
+					        </h:selectBooleanCheckbox>
         					<h:selectOneMenu id="foo5" value="#{node.value}" onfocus="document.getElementById(this.id + '-chk').checked=true">
 		        				<f:selectItems value="#{node.validValue}" />
 				        	</h:selectOneMenu>

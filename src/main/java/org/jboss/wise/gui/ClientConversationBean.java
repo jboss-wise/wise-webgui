@@ -124,19 +124,11 @@ public class ClientConversationBean implements Serializable {
     }
     
     public void addChild(GroupWiseTreeElement el) {
-	try {
-	    el.incrementChildren();
-	} catch (Exception e) {
-	    throw new RuntimeException(e);
-	}
+	el.incrementChildren();
     }
     
     public void removeChild(WiseTreeElement el) {
-	try {
-	    ((GroupWiseTreeElement)el.getParent()).removeChild(el.getId());
-	} catch (Exception e) {
-	    throw new RuntimeException(e);
-	}
+	((GroupWiseTreeElement)el.getParent()).removeChild(el.getId());
     }
     
     public void lazyLoadChild(LazyLoadWiseTreeElement el) {
@@ -145,6 +137,10 @@ public class ClientConversationBean implements Serializable {
 	} catch (Exception e) {
 	    throw new RuntimeException(e);
 	}
+    }
+    
+    public void onInputTextFocus(WiseTreeElement el) {
+	el.setNotNil(true);
     }
     
     private static TreeNodeImpl convertOperationParametersToGui(WSMethod wsMethod, WSDynamicClient client) {
