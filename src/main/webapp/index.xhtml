@@ -20,7 +20,7 @@
                 <h:form id="wsdlSelection">
                     <h:outputLabel value="URL:" for="wsdlUrlInput"/>
                     <h:inputText id="wsdlUrlInput" value="#{clientConversationBean.wsdlUrl}" />
-                    <a4j:commandButton value="OK" render="opSelectionPanel" action="#{clientConversationBean.readWsdl}" />
+                    <a4j:commandButton value="OK" render="epSelection" action="#{clientConversationBean.readWsdl}" />
                 </h:form>
             </rich:panel>
             <br />
@@ -36,7 +36,7 @@
                                     <rich:panelMenuGroup label="#{port.name}" expanded="true">
                                         <c:forEach var="operation" items="#{port.operations}" >
                                             <rich:panelMenuItem label="#{operation.fullName}" name="#{service.name};#{port.name};#{operation.name}"
-                                                action="#{clientConversationBean.parseOperationParameters}"/>
+                                                action="#{clientConversationBean.parseOperationParameters}" render="parInputPanel parInput"/>
                                         </c:forEach>
                                     </rich:panelMenuGroup>
                                 </c:forEach>
