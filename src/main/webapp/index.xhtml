@@ -19,8 +19,8 @@
             <rich:panel header="WSDL selection">
                 <h:form id="wsdlSelection">
                     <h:outputLabel value="URL:" for="wsdlUrlInput"/>
-                    <h:inputText id="wsdlUrlInput" value="#{clientConversationBean.wsdlUrl}" />
-                    <a4j:commandButton value="OK" render="epSelection" action="#{clientConversationBean.readWsdl}" />
+                    <h:inputText id="wsdlUrlInput" value="#{clientConversationBean.wsdlUrl}" onclick="document.getElementById('wsdlSelection:okButton').disabled=false" />
+                    <a4j:commandButton id="okButton" value="OK" render="epSelection" action="#{clientConversationBean.readWsdl}" onclick="this.disabled=true" />
                 </h:form>
             </rich:panel>
             <br />

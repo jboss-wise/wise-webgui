@@ -93,6 +93,7 @@ public class ClientConversationBean implements Serializable {
     }
     
     public void parseOperationParameters() {
+	if (currentOperation == null) return;
 	StringTokenizer st = new StringTokenizer(currentOperation, ";");
 	String serviceName = st.nextToken();
 	String portName = st.nextToken();
