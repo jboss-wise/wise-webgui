@@ -33,6 +33,7 @@ import javax.enterprise.context.Conversation;
 import javax.enterprise.context.ConversationScoped;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.jws.soap.SOAPBinding;
 
 import org.jboss.wise.core.client.InvocationResult;
 import org.jboss.wise.core.client.WSDynamicClient;
@@ -148,8 +149,14 @@ public class ClientConversationBean implements Serializable {
 	WiseTreeElementBuilder builder = new WiseTreeElementBuilder(client);
 	TreeNodeImpl rootElement = new TreeNodeImpl();
 	Collection<? extends WebParameter> parameters = wsMethod.getWebParams().values();
+	SOAPBinding soapBindingAnn = wsMethod.getEndpoint().getUnderlyingObjectClass().getAnnotation(SOAPBinding.class);
+	boolean rpcLit = false;
+	if (soapBindingAnn != null) {
+	    SOAPBinding.Style style = soapBindingAnn.style();
+	    rpcLit = style != null && SOAPBinding.Style.RPC.equals(style);
+	}
 	for (WebParameter parameter : parameters) {
-	    WiseTreeElement wte = builder.buildTreeFromType(parameter.getType(), parameter.getName());
+	    WiseTreeElement wte = builder.buildTreeFromType(parameter.getType(), parameter.getName(), !rpcLit);
 	    rootElement.addChild(wte.getId(), wte);
 	}
 	return rootElement;
@@ -160,7 +167,7 @@ public class ClientConversationBean implements Serializable {
 	TreeNodeImpl rootElement = new TreeNodeImpl();
 	for (Entry<String, Object> res : result.getResult().entrySet()) {
 	    Object resObj = res.getValue();
-	    WiseTreeElement wte = builder.buildTreeFromType(resObj.getClass(), res.getKey(), resObj);
+	    WiseTreeElement wte = builder.buildTreeFromType(resObj.getClass(), res.getKey(), resObj, true);
 	    rootElement.addChild(wte.getId(), wte);
 	}
 	return rootElement;

@@ -25,19 +25,22 @@ import javax.xml.namespace.QName;
  */
 public class SimpleWiseTreeElementFactory {
 
-    public static SimpleWiseTreeElement create(Class<?> classType, String name) {
+    public static SimpleWiseTreeElement create(Class<?> classType, String name, Object obj) {
+	SimpleWiseTreeElement element;
 	if (classType.isEnum()) {
-	    return new EnumerationWiseTreeElement(classType, name, null);
+	    element = new EnumerationWiseTreeElement(classType, name, null);
 	} else if (QName.class.isAssignableFrom(classType)) {
-	    return new QNameWiseTreeElement(classType, name, null, null);
+	    element = new QNameWiseTreeElement(classType, name, null, null);
 	} else if (XMLGregorianCalendar.class.isAssignableFrom(classType)) {
-	    return new XMLGregorianWiseTreeElement(classType, name, null);
+	    element = new XMLGregorianWiseTreeElement(classType, name, null);
 	} else if (Duration.class.isAssignableFrom(classType)) {
-	    return new DurationWiseTreeElement(classType, name, null);
+	    element = new DurationWiseTreeElement(classType, name, null);
 	} else {
-	    return new SimpleWiseTreeElement(classType, name, null);
+	    element = new SimpleWiseTreeElement(classType, name, null);
 	}
-
+	if (obj != null) {
+	    element.parseObject(obj);
+	}
+	return element;
     }
-
 }

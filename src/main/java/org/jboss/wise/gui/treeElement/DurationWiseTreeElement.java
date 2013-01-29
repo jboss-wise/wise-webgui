@@ -64,6 +64,13 @@ public class DurationWiseTreeElement extends SimpleWiseTreeElement {
 	    this.setValue(null);
 	}
     }
+    
+    @Override
+    public void enforceNotNillable() {
+	this.nillable = false;
+	this.nil = false;
+	this.value = "0";
+    }
 
     @Override
     public Object toObject() {

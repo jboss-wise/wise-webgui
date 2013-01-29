@@ -76,6 +76,13 @@ public class QNameWiseTreeElement extends SimpleWiseTreeElement {
     public void setLocalPart(String localPart) {
 	this.localPart = localPart;
     }
+    
+    @Override
+    public void enforceNotNillable() {
+	this.nillable = false;
+	this.nil = false;
+	this.value = "";
+    }
 
     @Override
     public void parseObject(Object obj) {

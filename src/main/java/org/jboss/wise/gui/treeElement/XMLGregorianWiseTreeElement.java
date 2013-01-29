@@ -72,6 +72,13 @@ public class XMLGregorianWiseTreeElement extends SimpleWiseTreeElement {
 	}
 	this.nil = obj == null;
     }
+    
+    @Override
+    public void enforceNotNillable() {
+	this.nillable = false;
+	this.nil = false;
+	this.value = new Date().toString();
+    }
 
     @Override
     public Object toObject() {

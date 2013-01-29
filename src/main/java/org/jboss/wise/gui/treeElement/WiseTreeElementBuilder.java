@@ -51,17 +51,18 @@ public class WiseTreeElementBuilder {
 	this.client = client;
     }
     
-    public WiseTreeElement buildTreeFromType(Type type, String name) {
-	return buildTreeFromType(type, name, null, null, null, new HashMap<Type, WiseTreeElement>(), new HashSet<Type>());
+    public WiseTreeElement buildTreeFromType(Type type, String name, boolean nillable) {
+	return buildTreeFromType(type, name, null, nillable, null, null, new HashMap<Type, WiseTreeElement>(), new HashSet<Type>());
     }
     
-    public WiseTreeElement buildTreeFromType(Type type, String name, Object obj) {
-	return buildTreeFromType(type, name, obj, null, null, new HashMap<Type, WiseTreeElement>(), new HashSet<Type>());
+    public WiseTreeElement buildTreeFromType(Type type, String name, Object obj, boolean nillable) {
+	return buildTreeFromType(type, name, obj, nillable, null, null, new HashMap<Type, WiseTreeElement>(), new HashSet<Type>());
     }
 
     private WiseTreeElement buildTreeFromType(Type type,
 	    				      String name,
 	    				      Object obj,
+	    				      boolean nillable,
 	    				      Class<?> scope,
 	    				      String namespace,
 	    				      Map<Type, WiseTreeElement> typeMap,
@@ -74,7 +75,7 @@ public class WiseTreeElementBuilder {
 	} else {
 	    Logger.getLogger(this.getClass()).debug("Not a parameterized type... casting to Class");
 	    
-	    return this.buildFromClass((Class<?>) type, name, obj, typeMap, stack);
+	    return this.buildFromClass((Class<?>) type, name, obj, nillable, typeMap, stack);
 
 	}
     }
@@ -89,11 +90,11 @@ public class WiseTreeElementBuilder {
 		    				   Set<Type> stack) {
 	Type firstTypeArg = pt.getActualTypeArguments()[0];
 	if (Collection.class.isAssignableFrom((Class<?>) pt.getRawType())) {
-	    WiseTreeElement prototype = this.buildTreeFromType(firstTypeArg, name, null, null, null, typeMap, stack);
+	    WiseTreeElement prototype = this.buildTreeFromType(firstTypeArg, name, null, true, null, null, typeMap, stack);
 	    GroupWiseTreeElement group = new GroupWiseTreeElement(pt, name, prototype);
 	    if (obj != null) {
 		for (Object o : (Collection) obj) {
-		    group.addChild(IDGenerator.nextVal(), this.buildTreeFromType(firstTypeArg, name, o, null, null, typeMap, stack));
+		    group.addChild(IDGenerator.nextVal(), this.buildTreeFromType(firstTypeArg, name, o, true, null, null, typeMap, stack));
 		}
 	    }
 	    return group;
@@ -102,7 +103,7 @@ public class WiseTreeElementBuilder {
 	    if (obj != null && obj instanceof JAXBElement) {
 		obj = ((JAXBElement)obj).getValue();
 	    }
-	    WiseTreeElement element = this.buildTreeFromType(firstTypeArg, name, obj, null, null, typeMap, stack);
+	    WiseTreeElement element = this.buildTreeFromType(firstTypeArg, name, obj, true, null, null, typeMap, stack);
 	    parameterized.addChild(element.getId(), element);
 	    return parameterized;
 	}
@@ -111,6 +112,7 @@ public class WiseTreeElementBuilder {
     private WiseTreeElement buildFromClass(Class<?> cl,
 	                                   String name,
 	                                   Object obj,
+	                                   boolean nillable,
 	                                   Map<Type, WiseTreeElement> typeMap,
 	    				   Set<Type> stack) {
 
@@ -122,8 +124,10 @@ public class WiseTreeElementBuilder {
 
 	if (isSimpleType(cl, client)) {
 	    Logger.getLogger(this.getClass()).debug("* simple");
-	    SimpleWiseTreeElement element = SimpleWiseTreeElementFactory.create(cl, name);
-	    element.parseObject(obj);
+	    SimpleWiseTreeElement element = SimpleWiseTreeElementFactory.create(cl, name, obj);
+	    if (!nillable) {
+		element.enforceNotNillable();
+	    }
 	    return element;
 	} else { // complex
 	    if (stack.contains(cl)) {
@@ -160,11 +164,14 @@ public class WiseTreeElementBuilder {
 			throw new WiseRuntimeException("Error calling getter method for field " + field, e);
 		    }
 		}
-		WiseTreeElement element = this.buildTreeFromType(field.getGenericType(), fieldName, fieldValue, cl, namespace, typeMap, stack);
+		WiseTreeElement element = this.buildTreeFromType(field.getGenericType(), fieldName, fieldValue, true, cl, namespace, typeMap, stack);
 		complex.addChild(element.getId(), element);
 	    }
 	    stack.remove(cl);
 	    typeMap.put(cl, complex.clone());
+	    if (!nillable) {
+		complex.setNillable(false);
+	    }
 	    return complex;
 	}
     }

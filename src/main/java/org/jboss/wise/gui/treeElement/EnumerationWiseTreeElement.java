@@ -54,6 +54,13 @@ public class EnumerationWiseTreeElement extends SimpleWiseTreeElement {
 	element.setNillable(this.isNillable());
 	return element;
     }
+    
+    @Override
+    public void enforceNotNillable() {
+	this.nillable = false;
+	this.nil = false;
+	this.value = getValidValue().keySet().iterator().next();
+    }
 
     @Override
     public void parseObject(Object obj) {

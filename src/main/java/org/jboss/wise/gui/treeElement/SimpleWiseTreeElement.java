@@ -53,9 +53,7 @@ public class SimpleWiseTreeElement extends WiseTreeElement {
 	this.id = IDGenerator.nextVal();
 	this.classType = classType;
 	this.name = name;
-	this.value = value;
-	this.nillable = !classType.isPrimitive(); // primitive are not nillable
-	this.nil = (value == null && nillable); // thus they can't be nil
+	init(classType, value);
     }
 
     /**
@@ -112,6 +110,7 @@ public class SimpleWiseTreeElement extends WiseTreeElement {
 	element.setClassType(this.classType);
 	element.setRemovable(this.isRemovable());
 	element.setNillable(this.isNillable());
+	element.init((Class<?>)this.classType, null);
 	return element;
     }
 
@@ -124,6 +123,56 @@ public class SimpleWiseTreeElement extends WiseTreeElement {
     public void parseObject(Object obj) {
 	this.setValue(obj == null ? null : obj.toString());
 	this.nil = (obj == null && nillable);
+    }
+    
+    /**
+     * Make sure this element can't be nill and set the default value
+     * (this is to be used e.g. for main RPC/Lit parameters)
+     */
+    public void enforceNotNillable() {
+	this.nillable = false;
+	this.nil = false;
+	this.value = getDefaultValue((Class<?>) classType);
+    }
+    
+    private void init(Class<?> classType, String value) {
+	// primitive are not nillable, thus they can't be nil or have a null value
+	this.value = (value == null && classType.isPrimitive()) ? getDefaultValue(classType) : value;
+	this.nillable = !classType.isPrimitive();
+	this.nil = (value == null && nillable);
+    }
+    
+    private static String getDefaultValue(Class<?> cl) {
+	if (cl.isPrimitive()) {
+	    cl = JavaUtils.getWrapperType(cl);
+	}
+	if ("java.lang.String".equalsIgnoreCase(cl.getName())) {
+	    return "";
+	} else if ("java.lang.Boolean".equalsIgnoreCase(cl.getName())) {
+	    return "false";
+	} else if ("java.lang.Byte".equalsIgnoreCase(cl.getName())) {
+	    return "0";
+	} else if ("java.lang.Character".equalsIgnoreCase(cl.getName())) {
+	    return "";
+	} else if ("java.lang.Double".equalsIgnoreCase(cl.getName())) {
+	    return "0.0";
+	} else if ("java.lang.Float".equalsIgnoreCase(cl.getName())) {
+	    return "0.0";
+	} else if ("java.lang.Integer".equalsIgnoreCase(cl.getName())) {
+	    return "0";
+	} else if ("java.lang.Long".equalsIgnoreCase(cl.getName())) {
+	    return "0";
+	} else if ("java.lang.Short".equalsIgnoreCase(cl.getName())) {
+	    return "0";
+	} else if ("java.math.BigDecimal".equalsIgnoreCase(cl.getName())) {
+	    return "0.0";
+	} else if ("java.math.BigInteger".equalsIgnoreCase(cl.getName())) {
+	    return "0";
+	} else if ("java.lang.Object".equalsIgnoreCase(cl.getName())) {
+	    return "";
+	} else {
+	    throw new WiseRuntimeException("Class type not supported: " + cl);
+	}
     }
 
     public Object toObject() {
