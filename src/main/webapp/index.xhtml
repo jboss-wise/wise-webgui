@@ -23,7 +23,7 @@
                 <h:form id="wsdlSelection">
                     <h:outputLabel value="URL:" for="wsdlUrlInput"/>
                     <h:inputText id="wsdlUrlInput" value="#{clientConversationBean.wsdlUrl}" onclick="document.getElementById('wsdlSelection:okButton').disabled=false" />
-                    <a4j:commandButton id="okButton" value="OK" render="epSelection" action="#{clientConversationBean.readWsdl}" onclick="this.disabled=true" />
+                    <a4j:commandButton id="okButton" value="OK" render="epSelection" action="#{clientConversationBean.readWsdl}" onclick="this.disabled=true" status="wsdlParseStatus" />
                 </h:form>
             </rich:panel>
             <br />
@@ -157,7 +157,8 @@
         					</a4j:commandLink>
 		        		</rich:treeNode>
         		    </rich:tree>
-                    <a4j:commandButton value="Perform invocation" render="opSelectionPanel" rerender="opSelectionPanel" action="#{clientConversationBean.performInvocation}" />
+                    <a4j:commandButton value="Perform invocation" render="opSelectionPanel" rerender="opSelectionPanel"
+                       action="#{clientConversationBean.performInvocation}" status="perfInvStatus" />
                 </h:form>
             </rich:panel>
             
@@ -222,6 +223,14 @@
             
             
             
+            <rich:popupPanel id="mpPerfInv" style="text-align:center" autosized="true" modal="true">
+               <h:outputText value="Invoking target endpoint and parsing results, please wait..." />
+            </rich:popupPanel>
+            <rich:popupPanel id="mpParseWsdl" style="text-align:center" autosized="true" modal="true">
+               <h:outputText value="Fetching and parsing wsdl, please wait..." />
+            </rich:popupPanel>
+            <a4j:status name="perfInvStatus" onstart="#{rich:component('mpPerfInv')}.show()" onstop="#{rich:component('mpPerfInv')}.hide()" />
+            <a4j:status name="wsdlParseStatus" onstart="#{rich:component('mpParseWsdl')}.show()" onstop="#{rich:component('mpParseWsdl')}.hide()" />
             
             
         </fieldset>
