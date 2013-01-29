@@ -86,6 +86,7 @@ public class GroupWiseTreeElement extends WiseTreeElement {
     }
 
     public Object toObject() {
+	if (isNil()) return null;
 	LinkedList<Object> returnList = new LinkedList<Object>();
 	Iterator<Object> keyIt = this.getChildrenKeysIterator();
 	while (keyIt.hasNext()) {

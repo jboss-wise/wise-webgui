@@ -67,6 +67,7 @@ public class DurationWiseTreeElement extends SimpleWiseTreeElement {
 
     @Override
     public Object toObject() {
+	if (isNil()) return null;
 	Object result = null;
 	try {
 	    result = DatatypeFactory.newInstance().newDuration(Long.parseLong(value));

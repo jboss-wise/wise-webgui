@@ -90,6 +90,6 @@ public class QNameWiseTreeElement extends SimpleWiseTreeElement {
 
     @Override
     public Object toObject() {
-	return new QName(nameSpace, localPart);
+	return isNil() ? null : new QName(nameSpace, localPart);
     }
 }

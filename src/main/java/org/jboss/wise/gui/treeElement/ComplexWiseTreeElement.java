@@ -72,6 +72,7 @@ public class ComplexWiseTreeElement extends WiseTreeElement {
 
     @SuppressWarnings("unchecked")
     public Object toObject() {
+	if (isNil()) return null;
 	Object obj = null;
 	try {
 	    Class<?> cl = (Class<?>) classType;
