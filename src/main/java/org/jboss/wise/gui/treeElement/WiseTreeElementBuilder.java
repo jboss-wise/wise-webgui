@@ -164,7 +164,7 @@ public class WiseTreeElementBuilder {
 		complex.addChild(element.getId(), element);
 	    }
 	    stack.remove(cl);
-	    typeMap.put(cl, complex);
+	    typeMap.put(cl, complex.clone());
 	    return complex;
 	}
     }
