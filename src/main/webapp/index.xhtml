@@ -215,6 +215,9 @@
 		        	</rich:tree>
                 </h:form>
             </rich:panel>
+            <rich:panel header="Error" rendered="#{not empty clientConversationBean.error}">
+               <h:outputText value="#{clientConversationBean.error}" />
+            </rich:panel>
             </a4j:outputPanel>
             
             </a4j:outputPanel>

@@ -43,6 +43,8 @@ import org.jboss.wise.core.client.WSService;
 import org.jboss.wise.core.client.WebParameter;
 import org.jboss.wise.core.client.builder.WSDynamicClientBuilder;
 import org.jboss.wise.core.client.factories.WSDynamicClientFactory;
+import org.jboss.wise.core.exception.InvocationException;
+import org.jboss.wise.core.exception.WiseRuntimeException;
 import org.jboss.wise.gui.treeElement.GroupWiseTreeElement;
 import org.jboss.wise.gui.treeElement.LazyLoadWiseTreeElement;
 import org.jboss.wise.gui.treeElement.WiseTreeElement;
@@ -68,6 +70,7 @@ public class ClientConversationBean implements Serializable {
     private String currentOperation;
     private TreeNodeImpl inputTree;
     private TreeNodeImpl outputTree;
+    private String error;
     private UITree inTree;
     
     @PostConstruct
@@ -77,24 +80,37 @@ public class ClientConversationBean implements Serializable {
 	conversation.setTimeout(CONVERSATION_TIMEOUT);
     }
     
-    public void readWsdl() throws ConnectException {
+    public void readWsdl() {
 	cleanup();
 	//restart conversation
 	conversation.end();
 	conversation.begin();
-	client = getClientBuilder().verbose(true).keepSource(true).wsdlURL(getWsdlUrl()).maxThreadPoolSize(1).build();
-	cleanupTask.addRef(client, System.currentTimeMillis() + CONVERSATION_TIMEOUT, new CleanupTask.CleanupCallback<WSDynamicClient>() {
-	    @Override
-	    public void cleanup(WSDynamicClient data) {
-		data.close();
+	try {
+	    client = getClientBuilder().verbose(true).keepSource(true).wsdlURL(getWsdlUrl()).maxThreadPoolSize(1).build();
+	    cleanupTask.addRef(client, System.currentTimeMillis() + CONVERSATION_TIMEOUT, new CleanupTask.CleanupCallback<WSDynamicClient>() {
+		@Override
+		public void cleanup(WSDynamicClient data) {
+		    data.close();
+		}
+	    });
+	} catch (Exception e) {
+	    error = "Could not read WSDL from specified URL. Please check logs for further information.";
+	    logException(e);
+	}
+	if (client != null) {
+	    try {
+		services = convertServicesToGui(client.processServices());
+	    } catch (Exception e) {
+		error = "Could not parse WSDL from specified URL. Please check logs for further information.";
+		logException(e);
 	    }
-	});
-	
-	services = convertServicesToGui(client.processServices());
+	}
     }
     
     public void parseOperationParameters() {
 	if (currentOperation == null) return;
+	outputTree = null;
+	error = null;
 	StringTokenizer st = new StringTokenizer(currentOperation, ";");
 	String serviceName = st.nextToken();
 	String portName = st.nextToken();
@@ -102,12 +118,14 @@ public class ClientConversationBean implements Serializable {
 	try {
 	    inputTree = convertOperationParametersToGui(client.getWSMethod(serviceName, portName, operationName), client);
 	} catch (Exception e) {
-	    throw new RuntimeException(e);
+	    error = toErrorMessage(e);
+	    logException(e);
 	}
-	outputTree = null;
     }
     
     public void performInvocation() {
+	outputTree = null;
+	error = null;
 	StringTokenizer st = new StringTokenizer(currentOperation, ";");
 	String serviceName = st.nextToken();
 	String portName = st.nextToken();
@@ -119,9 +137,20 @@ public class ClientConversationBean implements Serializable {
 		WiseTreeElement wte = (WiseTreeElement)inputTree.getChild(it.next());
 		params.put(wte.getName(), wte.isNil() ? null : wte.toObject());
 	    }
-	    outputTree = convertOperationResultToGui(wsMethod.invoke(params), client);
+	    InvocationResult result = null;
+	    try {
+		result = wsMethod.invoke(params);
+	    } catch (InvocationException e) {
+		logException(e);
+		error = "Unexpected fault / error received from target endpoint";
+	    }
+	    if (result != null) {
+		outputTree = convertOperationResultToGui(result, client);
+		error = null;
+	    }
 	} catch (Exception e) {
-	    throw new RuntimeException(e);
+	    error = toErrorMessage(e);
+	    logException(e);
 	}
     }
     
@@ -137,7 +166,8 @@ public class ClientConversationBean implements Serializable {
 	try {
 	    el.resolveReference();
 	} catch (Exception e) {
-	    throw new RuntimeException(e);
+	    error = toErrorMessage(e);
+	    logException(e);
 	}
     }
     
@@ -231,6 +261,7 @@ public class ClientConversationBean implements Serializable {
 	    inTree.clearInitialState();
 	}
 	inputTree = null;
+	error = null;
     }
     
     public String getWsdlUrl() {
@@ -280,11 +311,38 @@ public class ClientConversationBean implements Serializable {
     public void setOutputTree(TreeNodeImpl outputTree) {
         this.outputTree = outputTree;
     }
+    
+    public String getError() {
+        return error;
+    }
+
+    public void setError(String error) {
+        this.error = error;
+    }
 
     private static synchronized WSDynamicClientBuilder getClientBuilder() {
 	if (clientBuilder == null) {
 	    clientBuilder = WSDynamicClientFactory.getJAXWSClientBuilder();
 	}
 	return clientBuilder;
+    }
+    
+    private static String toErrorMessage(Exception e) {
+	StringBuilder sb = new StringBuilder();
+	if (e instanceof WiseRuntimeException) {
+	    sb.append(e.getMessage());
+	} else {
+	    sb.append(e.toString());
+	}
+	if (e.getCause() != null) {
+	    sb.append(", caused by ");
+	    sb.append(e.getCause());
+	}
+	sb.append(". Please check logs for further information.");
+	return sb.toString();
+    }
+    
+    private static void logException(Exception e) {
+	e.printStackTrace(); //TODO!!
     }
 }
