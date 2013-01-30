@@ -58,11 +58,8 @@ public class DurationWiseTreeElement extends SimpleWiseTreeElement {
 
     @Override
     public void parseObject(Object obj) {
-	if (obj != null) {
-	    this.setValue(((Duration) obj).toString());
-	} else {
-	    this.setValue(null);
-	}
+	this.setValue(obj != null ? ((Duration) obj).toString() : null);
+	this.nil = (obj == null && nillable);
     }
     
     @Override

@@ -36,6 +36,7 @@ public abstract class WiseTreeElement extends TreeNodeImpl implements TreeNode, 
     public static final String SIMPLE = "simple";
     public static final String COMPLEX = "complex";
     public static final String DURATION = "Duration";
+    public static final String EMPTY = "empty";
     public static final String ENUMERATION = "Enumeration";
     public static final String GROUP = "group";
     public static final String LAZY = "lazy";

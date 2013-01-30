@@ -61,7 +61,7 @@
 					           <f:ajax />
 					        </h:selectBooleanCheckbox>
 					        <h:inputText value="#{node.value}" id="foo" label="" rendered="#{node.type!='boolean' and node.type!='Boolean'}" columns="10"  >
-					           <f:ajax event="valueChange" render="foo-chk" listener="#{clientConversationBean.onInputTextFocus(node)}" />
+					           <f:ajax event="valueChange" render="foo-chk" listener="#{clientConversationBean.onInputFocus(node)}" />
 					        </h:inputText>
 					        <h:selectOneMenu value="#{node.value}" rendered="#{node.type=='boolean' or node.type=='Boolean'}">
         						<f:selectItem itemValue="true" itemLabel="true" />
@@ -77,11 +77,9 @@
 		        			<h:outputText value="&nbsp;" />
 		        			<a4j:commandLink name="Add" action="#{clientConversationBean.addChild(node)}" reRender="richTree">
 						        Add
-<!--						        <h:graphicImage styleClass="plus" value="images/small/Plus.png" />   -->
         					</a4j:commandLink>
         					<a4j:commandLink action="#{clientConversationBean.removeChild(node)}" rerender="richTree" rendered="#{node.removable}">
 				        		Remove
-<!--						        <h:graphicImage styleClass="minus" value="images/small/Minus.png" rendered="#{node.removable}" />    -->
         					</a4j:commandLink>
 		        		</rich:treeNode>
 				        <rich:treeNode type="lazy">
@@ -110,9 +108,9 @@
 		        			<h:selectBooleanCheckbox id="foo2-chk" value="#{node.notNil}" disabled="#{node.notNillable}" >
 		        			   <f:ajax />
 					        </h:selectBooleanCheckbox>
-				        	<rich:calendar id="foo2" value="#{node.valueDate}" oncollapse="document.getElementById(this.id + '-chk').checked=true;return true;"
-						        popup="true"
-        						showInput="true" enableManualInput="false" />
+				        	<rich:calendar id="foo2" value="#{node.valueDate}" popup="true" showInput="true" enableManualInput="false" >
+						        <f:ajax event="change" render="foo2-chk" listener="#{clientConversationBean.onInputFocus(node)}" />
+						    </rich:calendar>
         					<a4j:commandLink action="#{clientConversationBean.removeChild(node)}" rerender="richTree" rendered="#{node.removable}">
 				        		Remove
         					</a4j:commandLink>
@@ -122,7 +120,9 @@
 		        			<h:selectBooleanCheckbox id="foo3-chk" value="#{node.notNil}" disabled="#{node.notNillable}" >
 		        			   <f:ajax />
 					        </h:selectBooleanCheckbox>
-				        	<h:inputText id="foo3" value="#{node.value}" onfocus="document.getElementById(this.id + '-chk').checked=true"/>
+				        	<h:inputText id="foo3" value="#{node.value}">
+				        	   <f:ajax event="valueChange" render="foo3-chk" listener="#{clientConversationBean.onInputFocus(node)}" />
+				        	</h:inputText>
         					<h:outputText value="(MilliSeconds)" target="_blank" />
 		        			<h:outputText value="&nbsp;" />
 		        			<a4j:commandLink action="#{clientConversationBean.removeChild(node)}" rerender="richTree" rendered="#{node.removable}">
@@ -134,9 +134,10 @@
 				        	<h:selectBooleanCheckbox id="foo4-chk" value="#{node.notNil}" disabled="#{node.notNillable}" >
 				        	   <f:ajax />
 					        </h:selectBooleanCheckbox>
-        					<h:outputText value="nameSpace: " />
-		        			<h:inputText id="foo4" value="#{node.nameSpace}" onfocus="document.getElementById(this.id + '-chk').checked=true"/>
-				        	<h:outputText value=" localPart: " />
+		        			<h:inputText id="foo4" value="#{node.nameSpace}">
+		        			   <f:ajax event="valueChange" render="foo4-chk" listener="#{clientConversationBean.onInputFocus(node)}" />
+		        			</h:inputText>
+				        	<h:outputText value=" : " />
         					<h:inputText value="#{node.localPart}" />
 		        			<h:outputText value="&nbsp;" />
 		        			<a4j:commandLink action="#{clientConversationBean.removeChild(node)}" rerender="richTree" rendered="#{node.removable}">
@@ -211,6 +212,9 @@
         				</rich:treeNode>
 		        		<rich:treeNode type="complex">
 				        	<h:outputText value="#{node.type} : #{node.name}" />
+        				</rich:treeNode>
+		        		<rich:treeNode type="empty">
+				        	<h:outputText value="#{node.name} = ***NIL***" />
         				</rich:treeNode>
 		        	</rich:tree>
                 </h:form>

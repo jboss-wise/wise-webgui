@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2012, Red Hat, Inc. and/or its affiliates, and individual
+ * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
  * contributors by the @authors tag. See the copyright.txt in the 
  * distribution for a full listing of individual contributors.
  *
@@ -18,7 +18,6 @@ package org.jboss.wise.gui;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
-import java.net.ConnectException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -45,6 +44,7 @@ import org.jboss.wise.core.client.builder.WSDynamicClientBuilder;
 import org.jboss.wise.core.client.factories.WSDynamicClientFactory;
 import org.jboss.wise.core.exception.InvocationException;
 import org.jboss.wise.core.exception.WiseRuntimeException;
+import org.jboss.wise.gui.treeElement.EmptyWiseTreeElement;
 import org.jboss.wise.gui.treeElement.GroupWiseTreeElement;
 import org.jboss.wise.gui.treeElement.LazyLoadWiseTreeElement;
 import org.jboss.wise.gui.treeElement.WiseTreeElement;
@@ -171,7 +171,7 @@ public class ClientConversationBean implements Serializable {
 	}
     }
     
-    public void onInputTextFocus(WiseTreeElement el) {
+    public void onInputFocus(WiseTreeElement el) {
 	el.setNotNil(true);
     }
     
@@ -197,7 +197,12 @@ public class ClientConversationBean implements Serializable {
 	TreeNodeImpl rootElement = new TreeNodeImpl();
 	for (Entry<String, Object> res : result.getResult().entrySet()) {
 	    Object resObj = res.getValue();
-	    WiseTreeElement wte = builder.buildTreeFromType(resObj.getClass(), res.getKey(), resObj, true);
+	    WiseTreeElement wte;
+	    if (resObj != null) {
+		wte = builder.buildTreeFromType(resObj.getClass(), res.getKey(), resObj, true);
+	    } else {
+		wte = new EmptyWiseTreeElement("result");
+	    }
 	    rootElement.addChild(wte.getId(), wte);
 	}
 	return rootElement;
