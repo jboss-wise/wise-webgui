@@ -157,6 +157,18 @@
 				        		Remove
         					</a4j:commandLink>
 		        		</rich:treeNode>
+				        <rich:treeNode type="byteArray">
+				        	<h:outputText value="#{node.type} : #{node.name} " />
+					        <h:selectBooleanCheckbox id="foo6-chk" value="#{node.notNil}" disabled="#{node.notNillable}" >
+					           <f:ajax />
+					        </h:selectBooleanCheckbox>
+					        <h:inputText value="#{node.value}" id="foo6" >
+					           <f:ajax event="valueChange" render="foo6-chk" listener="#{clientConversationBean.onInputFocus(node)}" />
+					        </h:inputText>
+					        <a4j:commandLink action="#{clientConversationBean.removeChild(node)}" rerender="richTree" rendered="#{node.removable}">
+				        		Remove
+        					</a4j:commandLink>
+				        </rich:treeNode>
         		    </rich:tree>
                     <a4j:commandButton value="Perform invocation" render="opSelectionPanel" rerender="opSelectionPanel"
                        action="#{clientConversationBean.performInvocation}" status="perfInvStatus" />
@@ -212,6 +224,11 @@
         				</rich:treeNode>
 		        		<rich:treeNode type="complex">
 				        	<h:outputText value="#{node.type} : #{node.name}" />
+        				</rich:treeNode>
+				        <rich:treeNode type="byteArray">
+        					<h:outputText value="#{node.type} : #{node.name} = #{node.value}"
+        						rendered="#{node.notNil}" />
+        					<h:outputText value="#{node.type} : #{node.name} = ***NIL***" rendered="#{node.nil}" />
         				</rich:treeNode>
 		        		<rich:treeNode type="empty">
 				        	<h:outputText value="#{node.name} = ***NIL***" />

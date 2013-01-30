@@ -34,6 +34,7 @@ public abstract class WiseTreeElement extends TreeNodeImpl implements TreeNode, 
 
     private static final long serialVersionUID = 5298756163814063425L;
     public static final String SIMPLE = "simple";
+    public static final String BYTE_ARRAY = "byteArray";
     public static final String COMPLEX = "complex";
     public static final String DURATION = "Duration";
     public static final String EMPTY = "empty";

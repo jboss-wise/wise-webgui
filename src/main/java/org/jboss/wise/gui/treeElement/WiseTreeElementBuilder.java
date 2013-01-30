@@ -117,6 +117,13 @@ public class WiseTreeElementBuilder {
 	    				   Set<Type> stack) {
 
 	if (cl.isArray()) {
+	    if (byte.class.equals(cl.getComponentType())) {
+		ByteArrayWiseTreeElement element = new ByteArrayWiseTreeElement(cl, name, null);
+		if (obj != null) {
+		    element.parseObject(obj);
+		}
+		return element;
+	    }
 	    Logger.getLogger(this.getClass()).debug("* array");
 	    Logger.getLogger(this.getClass()).debug("Component type: " + cl.getComponentType());
 	    throw new WiseRuntimeException("Converter doesn't support this Object[] yet.");
