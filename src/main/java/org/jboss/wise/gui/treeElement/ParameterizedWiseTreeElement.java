@@ -21,7 +21,9 @@ import java.lang.reflect.ParameterizedType;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
+import javax.xml.ws.Holder;
 
 import org.jboss.logging.Logger;
 import org.jboss.wise.core.client.WSDynamicClient;
@@ -42,13 +44,15 @@ public class ParameterizedWiseTreeElement extends WiseTreeElement {
     private Class<?> scope;
 
     private String namespace;
+    
+    private Class<?> parameterizedClass;
 
     public ParameterizedWiseTreeElement() {
 	this.kind = PARAMETERIZED;
 	this.id = IDGenerator.nextVal();
     }
 
-    public ParameterizedWiseTreeElement(ParameterizedType classType, String name, WSDynamicClient client, Class<?> scope, String namespace) {
+    public ParameterizedWiseTreeElement(ParameterizedType classType, Class<?> parameterizedClass, String name, WSDynamicClient client, Class<?> scope, String namespace) {
 	this.kind = PARAMETERIZED;
 	this.id = IDGenerator.nextVal();
 	this.classType = classType;
@@ -57,6 +61,7 @@ public class ParameterizedWiseTreeElement extends WiseTreeElement {
 	this.client = client;
 	this.scope = scope;
 	this.namespace = namespace;
+	this.parameterizedClass = parameterizedClass;
     }
 
     @Override
@@ -70,6 +75,7 @@ public class ParameterizedWiseTreeElement extends WiseTreeElement {
 	element.setClient(this.client);
 	element.setScope(this.scope);
 	element.setNamespace(this.namespace);
+	element.setParameterizedClass(this.parameterizedClass);
 	Iterator<Object> keyIt = this.getChildrenKeysIterator();
 	while (keyIt.hasNext()) { // actually 1 child only
 	    WiseTreeElement child = (WiseTreeElement)this.getChild(keyIt.next());
@@ -80,7 +86,22 @@ public class ParameterizedWiseTreeElement extends WiseTreeElement {
 
     @Override
     public Object toObject() throws WiseRuntimeException {
-	return isLeaf() ? null : instanceXmlElementDecl(this.name, this.scope, this.namespace, ((WiseTreeElement) this.getChild(this.getChildrenKeysIterator().next())).toObject());
+	if (isLeaf()) {
+	    return null;
+	}
+	Object child = ((WiseTreeElement) this.getChild(this.getChildrenKeysIterator().next())).toObject();
+	if (parameterizedClass.isAssignableFrom(JAXBElement.class)) {
+	    return instanceXmlElementDecl(this.name, this.scope, this.namespace, child);
+	} else if (parameterizedClass.isAssignableFrom(Holder.class)) {
+	    return instanceHolder(child);
+	} else {
+	    throw new WiseRuntimeException("Unsupported parameterized class: " + parameterizedClass);
+	}
+    }
+    
+    @SuppressWarnings({ "rawtypes", "unchecked" })
+    private Object instanceHolder(Object obj) {
+	return new Holder(obj);
     }
     
     private Object instanceXmlElementDecl(String name, Class<?> scope, String namespace, Object value) {
@@ -132,5 +153,13 @@ public class ParameterizedWiseTreeElement extends WiseTreeElement {
 
     public String getNamespace() {
 	return namespace;
+    }
+    
+    public Class<?> getParameterizedClass() {
+        return parameterizedClass;
+    }
+
+    public void setParameterizedClass(Class<?> parameterizedClass) {
+        this.parameterizedClass = parameterizedClass;
     }
 }

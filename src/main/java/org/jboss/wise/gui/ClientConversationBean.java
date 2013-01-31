@@ -195,15 +195,25 @@ public class ClientConversationBean implements Serializable {
     private static TreeNodeImpl convertOperationResultToGui(InvocationResult result,  WSDynamicClient client) {
 	WiseTreeElementBuilder builder = new WiseTreeElementBuilder(client);
 	TreeNodeImpl rootElement = new TreeNodeImpl();
+	Map<String, Type> resTypes = new HashMap<String, Type>();
+	for (Entry<String, Object> res : result.getResult().entrySet()) {
+	    String key = res.getKey();
+	    if (key.startsWith(WSMethod.TYPE_PREFIX)) {
+		resTypes.put(key, (Type)res.getValue());
+	    }
+	}
 	for (Entry<String, Object> res : result.getResult().entrySet()) {
 	    Object resObj = res.getValue();
-	    WiseTreeElement wte;
-	    if (resObj != null) {
-		wte = builder.buildTreeFromType(resObj.getClass(), res.getKey(), resObj, true);
-	    } else {
-		wte = new EmptyWiseTreeElement("result");
+	    final String key = res.getKey();
+	    if (!key.startsWith(WSMethod.TYPE_PREFIX)) {
+		WiseTreeElement wte;
+		if (resObj != null) {
+		    wte = builder.buildTreeFromType(resTypes.get(WSMethod.TYPE_PREFIX + key), key, resObj, true);
+		} else {
+		    wte = new EmptyWiseTreeElement("result"); // TODO!! remove this and treat other elements now that return types are available
+		}
+		rootElement.addChild(wte.getId(), wte);
 	    }
-	    rootElement.addChild(wte.getId(), wte);
 	}
 	return rootElement;
     }

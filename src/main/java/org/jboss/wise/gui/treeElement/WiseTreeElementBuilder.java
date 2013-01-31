@@ -29,6 +29,7 @@ import java.util.Set;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.ws.Holder;
 
 import org.jboss.logging.Logger;
 import org.jboss.wise.core.client.WSDynamicClient;
@@ -99,11 +100,13 @@ public class WiseTreeElementBuilder {
 	    }
 	    return group;
 	} else {
-	    ParameterizedWiseTreeElement parameterized = new ParameterizedWiseTreeElement(pt, name, client, scope, namespace);
 	    if (obj != null && obj instanceof JAXBElement) {
 		obj = ((JAXBElement)obj).getValue();
+	    } else if (obj != null && obj instanceof Holder) {
+		obj = ((Holder)obj).value;
 	    }
 	    WiseTreeElement element = this.buildTreeFromType(firstTypeArg, name, obj, true, null, null, typeMap, stack);
+	    ParameterizedWiseTreeElement parameterized = new ParameterizedWiseTreeElement(pt, (Class<?>)pt.getRawType(), name, client, scope, namespace);
 	    parameterized.addChild(element.getId(), element);
 	    return parameterized;
 	}
