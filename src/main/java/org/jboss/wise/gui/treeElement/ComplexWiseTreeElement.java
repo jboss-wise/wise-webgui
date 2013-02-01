@@ -107,9 +107,6 @@ public class ComplexWiseTreeElement extends WiseTreeElement {
 
 		    }
 		    method.invoke(obj, childObject);
-//		    // TODO!!! Remove the following check once we're confident
-//		    method = cl.getMethod(getter, (Class[]) null);
-//		    Logger.getLogger(this.getClass()).info("[FIXME: remove check] risultato getter " + getter + ": " + method.invoke(obj, (Object[]) null));
 		}
 	    }
 	} catch (Exception e) {
