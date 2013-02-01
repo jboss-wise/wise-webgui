@@ -44,7 +44,6 @@ import org.jboss.wise.core.client.builder.WSDynamicClientBuilder;
 import org.jboss.wise.core.client.factories.WSDynamicClientFactory;
 import org.jboss.wise.core.exception.InvocationException;
 import org.jboss.wise.core.exception.WiseRuntimeException;
-import org.jboss.wise.gui.treeElement.EmptyWiseTreeElement;
 import org.jboss.wise.gui.treeElement.GroupWiseTreeElement;
 import org.jboss.wise.gui.treeElement.LazyLoadWiseTreeElement;
 import org.jboss.wise.gui.treeElement.WiseTreeElement;
@@ -203,16 +202,13 @@ public class ClientConversationBean implements Serializable {
 	    }
 	}
 	for (Entry<String, Object> res : result.getResult().entrySet()) {
-	    Object resObj = res.getValue();
 	    final String key = res.getKey();
 	    if (!key.startsWith(WSMethod.TYPE_PREFIX)) {
-		WiseTreeElement wte;
-		if (resObj != null) {
-		    wte = builder.buildTreeFromType(resTypes.get(WSMethod.TYPE_PREFIX + key), key, resObj, true);
-		} else {
-		    wte = new EmptyWiseTreeElement("result"); // TODO!! remove this and treat other elements now that return types are available
+		Type type = resTypes.get(WSMethod.TYPE_PREFIX + key);
+		if (type != void.class && type != Void.class) {
+		    WiseTreeElement wte = builder.buildTreeFromType(type, key, res.getValue(), true);
+		    rootElement.addChild(wte.getId(), wte);
 		}
-		rootElement.addChild(wte.getId(), wte);
 	    }
 	}
 	return rootElement;
