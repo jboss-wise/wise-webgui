@@ -16,6 +16,7 @@
  */
 package org.jboss.wise.gui.treeElement;
 
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -94,6 +95,10 @@ public class GroupWiseTreeElement extends WiseTreeElement {
 	    returnList.add(child.toObject());
 	}
 	return returnList;
+    }
+    
+    public String getType() {
+	return ((Class<?>) ((ParameterizedType) this.classType).getActualTypeArguments()[0]).getSimpleName();
     }
 
     public int getSize() {

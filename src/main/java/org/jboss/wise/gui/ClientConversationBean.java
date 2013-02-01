@@ -175,7 +175,7 @@ public class ClientConversationBean implements Serializable {
     }
     
     private static TreeNodeImpl convertOperationParametersToGui(WSMethod wsMethod, WSDynamicClient client) {
-	WiseTreeElementBuilder builder = new WiseTreeElementBuilder(client);
+	WiseTreeElementBuilder builder = new WiseTreeElementBuilder(client, true);
 	TreeNodeImpl rootElement = new TreeNodeImpl();
 	Collection<? extends WebParameter> parameters = wsMethod.getWebParams().values();
 	SOAPBinding soapBindingAnn = wsMethod.getEndpoint().getUnderlyingObjectClass().getAnnotation(SOAPBinding.class);
@@ -185,14 +185,14 @@ public class ClientConversationBean implements Serializable {
 	    rpcLit = style != null && SOAPBinding.Style.RPC.equals(style);
 	}
 	for (WebParameter parameter : parameters) {
-	    WiseTreeElement wte = builder.buildTreeFromType(parameter.getType(), parameter.getName(), !rpcLit);
+	    WiseTreeElement wte = builder.buildTreeFromType(parameter.getType(), parameter.getName(), null, !rpcLit);
 	    rootElement.addChild(wte.getId(), wte);
 	}
 	return rootElement;
     }
     
     private static TreeNodeImpl convertOperationResultToGui(InvocationResult result,  WSDynamicClient client) {
-	WiseTreeElementBuilder builder = new WiseTreeElementBuilder(client);
+	WiseTreeElementBuilder builder = new WiseTreeElementBuilder(client, false);
 	TreeNodeImpl rootElement = new TreeNodeImpl();
 	Map<String, Type> resTypes = new HashMap<String, Type>();
 	for (Entry<String, Object> res : result.getResult().entrySet()) {

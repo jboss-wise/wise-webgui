@@ -1,6 +1,6 @@
 /*
  * JBoss, Home of Professional Open Source
- * Copyright 2012, Red Hat, Inc. and/or its affiliates, and individual
+ * Copyright 2013, Red Hat, Inc. and/or its affiliates, and individual
  * contributors by the @authors tag. See the copyright.txt in the 
  * distribution for a full listing of individual contributors.
  *
@@ -47,17 +47,15 @@ import org.jboss.wise.core.utils.ReflectionUtils;
 public class WiseTreeElementBuilder {
     
     private WSDynamicClient client;
+    private boolean request;
     
-    public WiseTreeElementBuilder(WSDynamicClient client) {
+    public WiseTreeElementBuilder(WSDynamicClient client, boolean request) {
 	this.client = client;
+	this.request = request;
     }
     
-    public WiseTreeElement buildTreeFromType(Type type, String name, boolean nillable) {
-	return buildTreeFromType(type, name, null, nillable, null, null, new HashMap<Type, WiseTreeElement>(), new HashSet<Type>());
-    }
-    
-    public WiseTreeElement buildTreeFromType(Type type, String name, Object obj, boolean nillable) {
-	return buildTreeFromType(type, name, obj, nillable, null, null, new HashMap<Type, WiseTreeElement>(), new HashSet<Type>());
+    public WiseTreeElement buildTreeFromType(Type type, String name, Object value, boolean nillable) {
+	return buildTreeFromType(type, name, value, nillable, null, null, new HashMap<Type, WiseTreeElement>(), new HashSet<Type>());
     }
 
     private WiseTreeElement buildTreeFromType(Type type,
@@ -91,12 +89,17 @@ public class WiseTreeElementBuilder {
 		    				   Set<Type> stack) {
 	Type firstTypeArg = pt.getActualTypeArguments()[0];
 	if (Collection.class.isAssignableFrom((Class<?>) pt.getRawType())) {
-	    WiseTreeElement prototype = this.buildTreeFromType(firstTypeArg, name, null, true, null, null, typeMap, stack);
-	    GroupWiseTreeElement group = new GroupWiseTreeElement(pt, name, prototype);
-	    if (obj != null) {
-		for (Object o : (Collection) obj) {
-		    group.addChild(IDGenerator.nextVal(), this.buildTreeFromType(firstTypeArg, name, o, true, null, null, typeMap, stack));
+	    GroupWiseTreeElement group;
+	    if (obj != null || request) {
+		WiseTreeElement prototype = this.buildTreeFromType(firstTypeArg, name, null, true, null, null, typeMap, stack);
+		group = new GroupWiseTreeElement(pt, name, prototype);
+		if (obj != null) {
+		    for (Object o : (Collection) obj) {
+			group.addChild(IDGenerator.nextVal(), this.buildTreeFromType(firstTypeArg, name, o, true, null, null, typeMap, stack));
+		    }
 		}
+	    } else {
+		group = new GroupWiseTreeElement(pt, name, null);
 	    }
 	    return group;
 	} else {
@@ -140,7 +143,7 @@ public class WiseTreeElementBuilder {
 	    }
 	    return element;
 	} else { // complex
-	    if (stack.contains(cl)) {
+	    if (request && stack.contains(cl)) {
 		Logger.getLogger(this.getClass()).debug("* lazy");
 		return new LazyLoadWiseTreeElement(cl, name, typeMap);
 	    }
@@ -148,7 +151,9 @@ public class WiseTreeElementBuilder {
 	    Logger.getLogger(this.getClass()).debug("* complex");
 	    
 	    ComplexWiseTreeElement complex = new ComplexWiseTreeElement(cl, name);
-	    stack.add(cl);
+	    if (request) {
+		stack.add(cl);
+	    }
 	    for (Field field : ReflectionUtils.getAllFields(cl)) {
 		XmlElement elemAnnotation = field.getAnnotation(XmlElement.class);
 		XmlElementRef refAnnotation = field.getAnnotation(XmlElementRef.class);
@@ -177,8 +182,10 @@ public class WiseTreeElementBuilder {
 		WiseTreeElement element = this.buildTreeFromType(field.getGenericType(), fieldName, fieldValue, true, cl, namespace, typeMap, stack);
 		complex.addChild(element.getId(), element);
 	    }
-	    stack.remove(cl);
-	    typeMap.put(cl, complex.clone());
+	    if (request) {
+		stack.remove(cl);
+		typeMap.put(cl, complex.clone());
+	    }
 	    if (!nillable) {
 		complex.setNillable(false);
 	    }
