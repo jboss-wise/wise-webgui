@@ -46,12 +46,16 @@ import org.jboss.wise.core.utils.ReflectionUtils;
  */
 public class WiseTreeElementBuilder {
     
-    private WSDynamicClient client;
-    private boolean request;
+    private static Logger logger = Logger.getLogger(WiseTreeElementBuilder.class);
+    
+    private final WSDynamicClient client;
+    private final boolean request;
+    private final boolean trace;
     
     public WiseTreeElementBuilder(WSDynamicClient client, boolean request) {
 	this.client = client;
 	this.request = request;
+	this.trace = logger.isTraceEnabled();
     }
     
     public WiseTreeElement buildTreeFromType(Type type, String name, Object value, boolean nillable) {
@@ -66,14 +70,11 @@ public class WiseTreeElementBuilder {
 	    				      String namespace,
 	    				      Map<Type, WiseTreeElement> typeMap,
 	    				      Set<Type> stack) {
-	Logger.getLogger(this.getClass()).debug("=> Converting parameter '" + name + "', type '" + type + "'");
+	if (trace) logger.trace("=> Converting parameter '" + name + "', type '" + type + "'");
 	if (type instanceof ParameterizedType) {
-	    Logger.getLogger(this.getClass()).debug("Parameterized type...");
 	    ParameterizedType pt = (ParameterizedType) type;
 	    return this.buildParameterizedType(pt, name, obj, scope, namespace, typeMap, stack);
 	} else {
-	    Logger.getLogger(this.getClass()).debug("Not a parameterized type... casting to Class");
-	    
 	    return this.buildFromClass((Class<?>) type, name, obj, nillable, typeMap, stack);
 
 	}
@@ -123,6 +124,7 @@ public class WiseTreeElementBuilder {
 	    				   Set<Type> stack) {
 
 	if (cl.isArray()) {
+	    if (trace) logger.trace("* array, component type: " + cl.getComponentType());
 	    if (byte.class.equals(cl.getComponentType())) {
 		ByteArrayWiseTreeElement element = new ByteArrayWiseTreeElement(cl, name, null);
 		if (obj != null) {
@@ -130,13 +132,11 @@ public class WiseTreeElementBuilder {
 		}
 		return element;
 	    }
-	    Logger.getLogger(this.getClass()).debug("* array");
-	    Logger.getLogger(this.getClass()).debug("Component type: " + cl.getComponentType());
 	    throw new WiseRuntimeException("Converter doesn't support this Object[] yet.");
 	}
 
 	if (isSimpleType(cl, client)) {
-	    Logger.getLogger(this.getClass()).debug("* simple");
+	    if (trace) logger.trace("* simple");
 	    SimpleWiseTreeElement element = SimpleWiseTreeElementFactory.create(cl, name, obj);
 	    if (!nillable) {
 		element.enforceNotNillable();
@@ -144,11 +144,11 @@ public class WiseTreeElementBuilder {
 	    return element;
 	} else { // complex
 	    if (request && stack.contains(cl)) {
-		Logger.getLogger(this.getClass()).debug("* lazy");
+		if (trace) logger.trace("* lazy");
 		return new LazyLoadWiseTreeElement(cl, name, typeMap);
 	    }
 	    
-	    Logger.getLogger(this.getClass()).debug("* complex");
+	    if (trace) logger.trace("* complex");
 	    
 	    ComplexWiseTreeElement complex = new ComplexWiseTreeElement(cl, name);
 	    if (request) {

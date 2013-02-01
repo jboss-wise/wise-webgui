@@ -24,6 +24,8 @@ import javax.ejb.Schedule;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
 
+import org.jboss.logging.Logger;
+
 @Singleton
 @Startup
 public class CleanupHelper {
@@ -32,6 +34,7 @@ public class CleanupHelper {
     
     @Schedule(minute = "*/3", hour = "*", persistent = false) //every 3 minutes
     public void foo() {
+	Logger.getLogger(CleanupHelper.class).debug("Periodic cleanup...");
 	synchronized (tasks) {
 	    for (CleanupTask<?> task : tasks) {
 		task.refsCleanup();

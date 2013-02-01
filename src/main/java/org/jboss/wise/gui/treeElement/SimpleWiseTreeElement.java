@@ -21,7 +21,6 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.net.URLEncoder;
 
-import org.jboss.logging.Logger;
 import org.jboss.wise.core.exception.WiseRuntimeException;
 import org.jboss.wise.core.utils.IDGenerator;
 import org.jboss.wise.core.utils.JavaUtils;
@@ -187,7 +186,6 @@ public class SimpleWiseTreeElement extends WiseTreeElement {
 	Class<?> cl = (Class<?>) classType;
 	if (cl.isPrimitive()) {
 	    cl = JavaUtils.getWrapperType(cl);
-	    Logger.getLogger(this.getClass()).debug("Wrapper class assigned: " + cl);
 	}
 	if ("java.lang.String".equalsIgnoreCase(cl.getName())) {
 	    return new String(value);

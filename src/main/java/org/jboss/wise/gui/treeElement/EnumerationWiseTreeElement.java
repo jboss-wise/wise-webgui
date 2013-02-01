@@ -86,7 +86,6 @@ public class EnumerationWiseTreeElement extends SimpleWiseTreeElement {
     public Map<String, String> getValidValue() {
 	HashMap<String, String> returnMap = new HashMap<String, String>();
 	for (Object obj : ((Class<?>) classType).getEnumConstants()) {
-	    System.out.print("class:" + obj.getClass());
 	    String valueOfEnum;
 	    try {
 		Method method = obj.getClass().getMethod("value");
@@ -108,8 +107,6 @@ public class EnumerationWiseTreeElement extends SimpleWiseTreeElement {
 	    }
 	    Method method = cl.getMethod("fromValue", String.class);
 	    Object obj = method.invoke(null, value);
-	    System.out.print("returning:" + obj);
-	    System.out.print("returning:" + obj.getClass());
 	    return obj;
 	} catch (Exception e) {
 	    throw new WiseRuntimeException("Type format error", e);

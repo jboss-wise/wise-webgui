@@ -26,7 +26,6 @@ import java.util.List;
 import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.jboss.logging.Logger;
 import org.jboss.wise.core.exception.WiseRuntimeException;
 import org.jboss.wise.core.utils.IDGenerator;
 import org.jboss.wise.core.utils.ReflectionUtils;
@@ -84,15 +83,12 @@ public class ComplexWiseTreeElement extends WiseTreeElement {
 		String setter = ReflectionUtils.setterMethodName(child.getName(), child.isTypeBoolean());
 		String getter = ReflectionUtils.getterMethodName(child.getName(), child.isTypeBoolean());
 
-		Logger.getLogger(this.getClass()).debug("Setter: " + setter);
 		Method method;
 		if (child instanceof GroupWiseTreeElement) {
-		    Logger.getLogger(this.getClass()).debug("Child is a group...");
 		    method = cl.getMethod(getter, (Class[]) null);
 		    Collection<?> col = (Collection<?>) method.invoke(obj, (Object[]) null);
 		    col.addAll((List) child.toObject());
 		} else {
-		    Logger.getLogger(this.getClass()).debug("Child is not a group...");
 		    Object childObject = child.toObject();
 		    if (child instanceof ParameterizedWiseTreeElement) {
 			method = cl.getMethod(setter, (Class<?>) ((ParameterizedType) child.getClassType()).getRawType());
@@ -111,9 +107,9 @@ public class ComplexWiseTreeElement extends WiseTreeElement {
 
 		    }
 		    method.invoke(obj, childObject);
-		    // TODO!!! Remove the following check once we're confident
-		    method = cl.getMethod(getter, (Class[]) null);
-		    Logger.getLogger(this.getClass()).debug("[FIXME: remove check] risultato getter " + getter + ": " + method.invoke(obj, (Object[]) null));
+//		    // TODO!!! Remove the following check once we're confident
+//		    method = cl.getMethod(getter, (Class[]) null);
+//		    Logger.getLogger(this.getClass()).info("[FIXME: remove check] risultato getter " + getter + ": " + method.invoke(obj, (Object[]) null));
 		}
 	    }
 	} catch (Exception e) {

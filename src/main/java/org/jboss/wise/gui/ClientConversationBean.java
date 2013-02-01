@@ -16,6 +16,7 @@
  */
 package org.jboss.wise.gui;
 
+import java.io.PrintStream;
 import java.io.Serializable;
 import java.lang.reflect.Type;
 import java.util.Collection;
@@ -34,16 +35,17 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.jws.soap.SOAPBinding;
 
+import org.jboss.logging.Logger;
 import org.jboss.wise.core.client.InvocationResult;
 import org.jboss.wise.core.client.WSDynamicClient;
 import org.jboss.wise.core.client.WSEndpoint;
 import org.jboss.wise.core.client.WSMethod;
 import org.jboss.wise.core.client.WSService;
 import org.jboss.wise.core.client.WebParameter;
-import org.jboss.wise.core.client.builder.WSDynamicClientBuilder;
-import org.jboss.wise.core.client.factories.WSDynamicClientFactory;
+import org.jboss.wise.core.client.impl.reflection.builder.ReflectionBasedWSDynamicClientBuilder;
 import org.jboss.wise.core.exception.InvocationException;
 import org.jboss.wise.core.exception.WiseRuntimeException;
+import org.jboss.wise.core.utils.JBossLoggingOutputStream;
 import org.jboss.wise.gui.treeElement.GroupWiseTreeElement;
 import org.jboss.wise.gui.treeElement.LazyLoadWiseTreeElement;
 import org.jboss.wise.gui.treeElement.WiseTreeElement;
@@ -57,10 +59,11 @@ import org.richfaces.model.TreeNodeImpl;
 public class ClientConversationBean implements Serializable {
 
     private static final long serialVersionUID = 1L;
-
+    
     private static final int CONVERSATION_TIMEOUT = 15 * 60 * 1000; //15 mins instead of default 30 mins
-    private static WSDynamicClientBuilder clientBuilder;
     private static CleanupTask<WSDynamicClient> cleanupTask = new CleanupTask<WSDynamicClient>(true);
+    private static Logger logger = Logger.getLogger(ClientConversationBean.class);
+    private static PrintStream ps = new PrintStream(new JBossLoggingOutputStream(logger, Logger.Level.DEBUG), true);
     
     @Inject Conversation conversation;
     private WSDynamicClient client;
@@ -85,7 +88,7 @@ public class ClientConversationBean implements Serializable {
 	conversation.end();
 	conversation.begin();
 	try {
-	    client = getClientBuilder().verbose(true).keepSource(true).wsdlURL(getWsdlUrl()).maxThreadPoolSize(1).build();
+	    client = new ReflectionBasedWSDynamicClientBuilder().verbose(true).messageStream(ps).keepSource(true).maxThreadPoolSize(1).wsdlURL(getWsdlUrl()).build();
 	    cleanupTask.addRef(client, System.currentTimeMillis() + CONVERSATION_TIMEOUT, new CleanupTask.CleanupCallback<WSDynamicClient>() {
 		@Override
 		public void cleanup(WSDynamicClient data) {
@@ -331,13 +334,6 @@ public class ClientConversationBean implements Serializable {
         this.error = error;
     }
 
-    private static synchronized WSDynamicClientBuilder getClientBuilder() {
-	if (clientBuilder == null) {
-	    clientBuilder = WSDynamicClientFactory.getJAXWSClientBuilder();
-	}
-	return clientBuilder;
-    }
-    
     private static String toErrorMessage(Exception e) {
 	StringBuilder sb = new StringBuilder();
 	if (e instanceof WiseRuntimeException) {
@@ -354,6 +350,6 @@ public class ClientConversationBean implements Serializable {
     }
     
     private static void logException(Exception e) {
-	e.printStackTrace(); //TODO!!
+	logger.error("", e);
     }
 }

@@ -25,7 +25,6 @@ import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.ws.Holder;
 
-import org.jboss.logging.Logger;
 import org.jboss.wise.core.client.WSDynamicClient;
 import org.jboss.wise.core.exception.WiseRuntimeException;
 import org.jboss.wise.core.utils.IDGenerator;
@@ -129,7 +128,6 @@ public class ParameterizedWiseTreeElement extends WiseTreeElement {
 	    }
 	    if (methodToUse != null) {
 		Object obj = objectFactoryClass.newInstance();
-		Logger.getLogger(this.getClass()).debug(methodToUse + " with value=" + value);
 		return methodToUse.invoke(obj, new Object[] { value });
 	    } else {
 		return null;
