@@ -23,6 +23,10 @@
                 <h:form id="wsdlSelection">
                     <h:outputLabel value="URL:" for="wsdlUrlInput"/>
                     <h:inputText id="wsdlUrlInput" value="#{clientConversationBean.wsdlUrl}" onclick="document.getElementById('wsdlSelection:okButton').disabled=false" />
+                    <h:outputLabel value="User:" for="wsdlUser"/>
+                    <h:inputText id="wsdlUser" value="#{clientConversationBean.wsdlUser}" onclick="document.getElementById('wsdlSelection:okButton').disabled=false" />
+                    <h:outputLabel value="Password:" for="wsdlPwd"/>
+                    <h:inputSecret id="wsdlPwd" value="#{clientConversationBean.wsdlPwd}" onclick="document.getElementById('wsdlSelection:okButton').disabled=false" />
                     <a4j:commandButton id="okButton" value="OK" render="epSelection" action="#{clientConversationBean.readWsdl}" onclick="this.disabled=true" status="wsdlParseStatus" />
                 </h:form>
             </rich:panel>

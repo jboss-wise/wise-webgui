@@ -42,6 +42,7 @@ import org.jboss.wise.core.client.WSEndpoint;
 import org.jboss.wise.core.client.WSMethod;
 import org.jboss.wise.core.client.WSService;
 import org.jboss.wise.core.client.WebParameter;
+import org.jboss.wise.core.client.builder.WSDynamicClientBuilder;
 import org.jboss.wise.core.client.impl.reflection.builder.ReflectionBasedWSDynamicClientBuilder;
 import org.jboss.wise.core.exception.InvocationException;
 import org.jboss.wise.core.exception.WiseRuntimeException;
@@ -68,6 +69,8 @@ public class ClientConversationBean implements Serializable {
     @Inject Conversation conversation;
     private WSDynamicClient client;
     private String wsdlUrl;
+    private String wsdlUser;
+    private String wsdlPwd;
     private List<Service> services;
     private String currentOperation;
     private TreeNodeImpl inputTree;
@@ -88,7 +91,14 @@ public class ClientConversationBean implements Serializable {
 	conversation.end();
 	conversation.begin();
 	try {
-	    client = new ReflectionBasedWSDynamicClientBuilder().verbose(true).messageStream(ps).keepSource(true).maxThreadPoolSize(1).wsdlURL(getWsdlUrl()).build();
+	    WSDynamicClientBuilder builder = new ReflectionBasedWSDynamicClientBuilder().verbose(true).messageStream(ps).keepSource(true).maxThreadPoolSize(1);
+	    if (wsdlUser != null && wsdlUser.length() > 0) {
+		builder.userName(wsdlUser);
+	    }
+	    if (wsdlPwd != null && wsdlPwd.length() > 0) {
+		builder.password(wsdlPwd);
+	    }
+	    client = builder.wsdlURL(getWsdlUrl()).build();
 	    cleanupTask.addRef(client, System.currentTimeMillis() + CONVERSATION_TIMEOUT, new CleanupTask.CleanupCallback<WSDynamicClient>() {
 		@Override
 		public void cleanup(WSDynamicClient data) {
@@ -284,6 +294,22 @@ public class ClientConversationBean implements Serializable {
 
     public void setWsdlUrl(String wsdlUrl) {
         this.wsdlUrl = wsdlUrl;
+    }
+
+    public String getWsdlUser() {
+        return wsdlUser;
+    }
+
+    public void setWsdlUser(String wsdlUser) {
+        this.wsdlUser = wsdlUser;
+    }
+
+    public String getWsdlPwd() {
+        return wsdlPwd;
+    }
+
+    public void setWsdlPwd(String wsdlPwd) {
+        this.wsdlPwd = wsdlPwd;
     }
 
     public List<Service> getServices() {
