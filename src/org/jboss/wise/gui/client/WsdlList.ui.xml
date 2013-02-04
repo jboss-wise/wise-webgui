@@ -1,0 +1,68 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:wise="urn:import:org.jboss.wise.gui.client">
+	<!--
+		JBoss, Home of Professional Open Source Copyright 2009, JBoss Inc.,
+		and individual contributors as indicated by the @authors tag. See the
+		copyright.txt in the distribution for a full listing of individual
+		contributors. This is free software; you can redistribute it and/or
+		modify it under the terms of the GNU Lesser General Public License as
+		published by the Free Software Foundation; either version 2.1 of the
+		License, or (at your option) any later version. This software is
+		distributed in the hope that it will be useful, but WITHOUT ANY
+		WARRANTY; without even the implied warranty of MERCHANTABILITY or
+		FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public
+		License for more details. You should have received a copy of the GNU
+		Lesser General Public License along with this software; if not, write
+		to the Free Software Foundation, Inc., 51 Franklin St, Fifth Floor,
+		Boston, MA 02110-1301 USA, or see the FSF site: http://www.fsf.org.
+	-->
+	<g:HTMLPanel>
+		<div
+			style="border-bottom-style:solid; border-bottom-width:1px; min-height:24px; text-align:left; margin-top: 20px">
+			<span style="vertical-align:middle;">List of previously saved wsdl references:</span>
+		</div>
+		<div style="margin-top: 10px;">
+			<div style="width: 100%; text-align:right;">
+				<g:TextBox ui:field='searchBox' visibleLength='30' enabled='false'/>
+			</div>
+		</div>
+		<div style="position:absolute;left:0px;top:90px;right:15px;heigth:24px;"
+			class='header'>
+			<table style="width:100%">
+				<thead>
+					<tr>
+						<th style="width:20%">NAME</th>
+						<th style="width:60%">DESCRIPTION</th>
+						<th style="width:20%">SAVING DATE</th>
+					</tr>
+				</thead>
+			</table>
+		</div>
+		<div
+			style="position:absolute;left:0px;top:114px;right:0px;bottom:30px;overflow:hidden;"
+			class='content'>
+			<div
+				style="position:absolute;top:0px;left:0px;right:0px;bottom:0px;overflow:scroll;">
+				<table style="width:100%">
+					<tbody ui:field='content' />
+				</table>
+			</div>
+		</div>
+		<div style="position:absolute;left:0px;right:0px;bottom:0px;height:30px;">
+			<table style="width:100%">
+				<tr>
+					<td style="text-align:left;">
+						<g:Button ui:field='deleteBtn'>Delete</g:Button>
+					</td>
+					<td style="text-align:right;">
+						<g:Button ui:field='editBtn'>Edit...</g:Button>
+                        <g:Button ui:field='duplicateBtn'>Duplicate</g:Button>
+						<g:Button ui:field='newBtn'>New...</g:Button>
+						<g:Button ui:field='openBtn'>Open</g:Button>
+					</td>
+				</tr>
+			</table>
+		</div>
+	</g:HTMLPanel>
+</ui:UiBinder> 

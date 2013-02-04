@@ -1,0 +1,11 @@
+/* Important: this file uses GWT css resource syntax */
+@def darkFrameColor #69E;
+@def lightFrameColor #c5e2ff;
+@def backgroundColor #fff;
+@def boldLineColor #000;
+@def activeTextColor #69E;
+@def alertContentWidth 320px;
+.btnImage {
+	vertical-align: middle;
+	cursor: pointer;
+}
