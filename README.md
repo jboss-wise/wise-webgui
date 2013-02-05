@@ -16,7 +16,7 @@ Build and Deploy the application
 
         mvn clean package jboss-as:deploy
 
-4. This will deploy `target/wise-gui.war` to the running instance of the server.
+3. This will deploy `target/wise-gui.war` to the running instance of the server.
 
 
 Access the application 
