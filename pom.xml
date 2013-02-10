@@ -14,16 +14,16 @@
 
    <groupId>org.jboss.wise.gui</groupId>
    <artifactId>wise-gui</artifactId>
-   <version>1.0.0.Final</version>
+   <version>1.0.1-SNAPSHOT</version>
    <packaging>war</packaging>
    <name>JBoss Wise GUI</name>
    <description>A GUI for JBoss Wise Core</description>
    <url>http://www.jboss.org/wise</url>
 
    <scm>
-      <connection>scm:svn:http://anonsvn.jboss.org/repos/wise/webgui/tags/wise-webgui-1.0.0.Final</connection>
-      <developerConnection>scm:svn:https://svn.jboss.org/repos/wise/webgui/tags/wise-webgui-1.0.0.Final</developerConnection>
-      <url>http://fisheye.jboss.org/viewrep/Wise/webgui/tags/wise-webgui-1.0.0.Final</url>
+      <connection>scm:svn:http://anonsvn.jboss.org/repos/wise/webgui/trunk</connection>
+      <developerConnection>scm:svn:https://svn.jboss.org/repos/wise/webgui/trunk</developerConnection>
+      <url>http://fisheye.jboss.org/viewrep/Wise/webgui/trunk</url>
    </scm>
 
    <licenses>
