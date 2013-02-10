@@ -14,7 +14,7 @@
 
    <groupId>org.jboss.wise.gui</groupId>
    <artifactId>wise-gui</artifactId>
-   <version>1.0.0-SNAPSHOT</version>
+   <version>1.0.0.Final</version>
    <packaging>war</packaging>
    <name>JBoss Wise GUI</name>
    <description>A GUI for JBoss Wise Core</description>
@@ -40,7 +40,7 @@
       <version.org.jboss.spec.jboss.javaee.6.0>3.0.0.Final</version.org.jboss.spec.jboss.javaee.6.0>
        
       <version.org.richfaces>4.3.0.Final</version.org.richfaces>
-      <version.wise.core>2.0.0-SNAPSHOT</version.wise.core>
+      <version.wise.core>2.0.0.Final</version.wise.core>
 
       <!-- other plugin versions -->
       <version.compiler.plugin>2.3.1</version.compiler.plugin>
