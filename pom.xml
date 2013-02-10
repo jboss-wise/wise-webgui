@@ -18,8 +18,14 @@
    <packaging>war</packaging>
    <name>JBoss Wise GUI</name>
    <description>A GUI for JBoss Wise Core</description>
+   <url>http://www.jboss.org/wise</url>
 
-   <url>http://jboss.org/wise</url>
+   <scm>
+      <connection>scm:svn:http://anonsvn.jboss.org/repos/wise/webgui/tags/wise-webgui-1.0.0.Final</connection>
+      <developerConnection>scm:svn:https://svn.jboss.org/repos/wise/webgui/tags/wise-webgui-1.0.0.Final</developerConnection>
+      <url>http://fisheye.jboss.org/viewrep/Wise/webgui/tags/wise-webgui-1.0.0.Final</url>
+   </scm>
+
    <licenses>
       <license>
          <name>Apache License, Version 2.0</name>
@@ -27,6 +33,12 @@
          <url>http://www.apache.org/licenses/LICENSE-2.0.html</url>
       </license>
    </licenses>
+   <inceptionYear>2013</inceptionYear>
+
+   <issueManagement>
+      <system>jira</system>
+      <url>https://jira.jboss.org/jira/browse/WISE</url>
+   </issueManagement>
 
    <properties>
       <!-- Explicitly declaring the source encoding eliminates the following 
