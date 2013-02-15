@@ -16,6 +16,7 @@
  */
 package org.jboss.wise.gui;
 
+import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.lang.reflect.Type;
@@ -77,7 +78,8 @@ public class ClientConversationBean implements Serializable {
     private TreeNodeImpl outputTree;
     private String error;
     private UITree inTree;
-    
+    private String requestPreview;
+
     @PostConstruct
     public void init() {
 	//this is called each time a new browser tab is used and whenever the conversation expires (hence a new bean is created)
@@ -162,6 +164,28 @@ public class ClientConversationBean implements Serializable {
 	    }
 	} catch (Exception e) {
 	    error = toErrorMessage(e);
+	    logException(e);
+	}
+    }
+    
+    public void generateRequestPreview() {
+	requestPreview = null;
+	StringTokenizer st = new StringTokenizer(currentOperation, ";");
+	String serviceName = st.nextToken();
+	String portName = st.nextToken();
+	String operationName = st.nextToken();
+	try {
+	    WSMethod wsMethod = client.getWSMethod(serviceName, portName, operationName);
+	    Map<String, Object> params = new HashMap<String, Object>();
+	    for (Iterator<Object> it = inputTree.getChildrenKeysIterator(); it.hasNext(); ) {
+		WiseTreeElement wte = (WiseTreeElement)inputTree.getChild(it.next());
+		params.put(wte.getName(), wte.isNil() ? null : wte.toObject());
+	    }
+	    ByteArrayOutputStream os = new ByteArrayOutputStream();
+	    wsMethod.writeRequestPreview(params, os);
+	    requestPreview = os.toString("UTF-8");
+	} catch (Exception e) {
+	    requestPreview = toErrorMessage(e);
 	    logException(e);
 	}
     }
@@ -358,6 +382,14 @@ public class ClientConversationBean implements Serializable {
 
     public void setError(String error) {
         this.error = error;
+    }
+    
+    public String getRequestPreview() {
+        return requestPreview;
+    }
+
+    public void setRequestPreview(String requestPreview) {
+        this.requestPreview = requestPreview;
     }
 
     private static String toErrorMessage(Exception e) {
