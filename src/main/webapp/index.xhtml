@@ -183,19 +183,20 @@
                     
                     <a4j:commandButton value="Preview message" render="popupPreview" action="#{clientConversationBean.generateRequestPreview}"
                        id="previewButton" oncomplete="#{rich:component('popupPreview')}.show();">
-					</a4j:commandButton>
+                    </a4j:commandButton>
+
+                    <rich:popupPanel id="popupPreview" modal="true" resizeable="true" onmaskclick="#{rich:component('popupPreview')}.hide()" minWidth="550" minHeight="450">
+                        <f:facet name="header">
+                            <h:outputText value="SOAP request message preview" />
+                        </f:facet>
+                        <f:facet name="controls">
+                            <h:outputLink value="#" onclick="#{rich:component('popupPreview')}.hide(); return false;">X</h:outputLink>
+                        </f:facet>
+                        <p>Below is a preview of the SOAP message that will be generated upon invocation. The actual message going on the wire might be different
+                           depending on the selected service policy (security, addressing, reliable-messaging, etc.), if any.</p>
+                        <div align="center"><h:inputTextarea value="#{clientConversationBean.requestPreview}" cols="80" rows="20" readonly="true" styleClass="preformatted"/></div>
+                    </rich:popupPanel>
                 </h:form>
-				<rich:popupPanel id="popupPreview" modal="true" resizeable="true" onmaskclick="#{rich:component('popupPreview')}.hide()" minWidth="550" minHeight="450">
-        			<f:facet name="header">
-            			<h:outputText value="SOAP request message preview" />
-			        </f:facet>
-        			<f:facet name="controls">
-			            <h:outputLink value="#" onclick="#{rich:component('popupPreview')}.hide(); return false;">X</h:outputLink>
-        			</f:facet>
-        			<p>Below is a preview of the SOAP message that will be generated upon invocation. The actual message going on the wire might be different
-        			depending on the selected service policy (security, addressing, reliable-messaging, etc.), if any.</p>
-        			<div align="center"><h:inputTextarea value="#{clientConversationBean.requestPreview}" cols="80" rows="20" readonly="true" styleClass="preformatted"/></div>
-				</rich:popupPanel>
             </rich:panel>
             
             <br />
