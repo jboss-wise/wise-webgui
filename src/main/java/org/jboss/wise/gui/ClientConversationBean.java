@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.Conversation;
@@ -126,7 +127,9 @@ public class ClientConversationBean implements Serializable {
 	    WSMethod wsMethod = ClientHelper.getWSMethod(currentOperation, client);
 	    InvocationResult result = null;
 	    try {
-		result = wsMethod.invoke(ClientHelper.processGUIParameters(inputTree));
+		Map<String, Object> params = ClientHelper.processGUIParameters(inputTree);
+		ClientHelper.addOUTParameters(params, wsMethod, client);
+		result = wsMethod.invoke(params);
 	    } catch (InvocationException e) {
 		logException(e);
 		error = "Unexpected fault / error received from target endpoint";

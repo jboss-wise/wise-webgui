@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Map.Entry;
 
+import javax.jws.WebParam;
 import javax.jws.soap.SOAPBinding;
 
 import org.jboss.wise.core.client.InvocationResult;
@@ -64,13 +65,15 @@ public class ClientHelper implements Serializable {
 	    rpcLit = style != null && SOAPBinding.Style.RPC.equals(style);
 	}
 	for (WebParameter parameter : parameters) {
-	    WiseTreeElement wte = builder.buildTreeFromType(parameter.getType(), parameter.getName(), null, !rpcLit);
-	    rootElement.addChild(wte.getId(), wte);
+	    if (parameter.getMode() != WebParam.Mode.OUT) {
+		WiseTreeElement wte = builder.buildTreeFromType(parameter.getType(), parameter.getName(), null, !rpcLit);
+		rootElement.addChild(wte.getId(), wte);
+	    }
 	}
 	return rootElement;
     }
     
-    public static TreeNodeImpl convertOperationResultToGui(InvocationResult result,  WSDynamicClient client) {
+    public static TreeNodeImpl convertOperationResultToGui(InvocationResult result, WSDynamicClient client) {
 	WiseTreeElementBuilder builder = new WiseTreeElementBuilder(client, false);
 	TreeNodeImpl rootElement = new TreeNodeImpl();
 	Map<String, Type> resTypes = new HashMap<String, Type>();
@@ -140,6 +143,20 @@ public class ClientHelper implements Serializable {
 	    params.put(wte.getName(), wte.isNil() ? null : wte.toObject());
 	}
 	return params;
+    }
+    
+    public static void addOUTParameters(Map<String, Object> params, WSMethod wsMethod, WSDynamicClient client) {
+	WiseTreeElementBuilder builder = null;
+	final Collection<? extends WebParameter> parameters = wsMethod.getWebParams().values();
+	for (WebParameter parameter : parameters) {
+	    if (parameter.getMode() == WebParam.Mode.OUT) {
+		if (builder == null) {
+		    builder = new WiseTreeElementBuilder(client, true);
+		}
+		WiseTreeElement wte = builder.buildTreeFromType(parameter.getType(), parameter.getName(), null, true);
+		params.put(wte.getName(), wte.isNil() ? null : wte.toObject());
+	    }
+	}
     }
 
     public static String toErrorMessage(Exception e) {
