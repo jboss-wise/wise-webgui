@@ -216,7 +216,7 @@
             <br />
             <a4j:outputPanel id="resultPanel" ajaxRendered="true">
             
-            <rich:panel header="Response" rendered="#{not empty clientConversationBean.outputTree}">
+            <rich:panel header="Response" rendered="#{clientConversationBean.responseAvailable}">
                 <h:form id="resForm">
                     <rich:tree id="richResTree" var="node" value="#{clientConversationBean.outputTree}" nodeType="#{node.kind}" switchType="ajax">
 				        <rich:treeNode type="simple">
@@ -259,6 +259,20 @@
         					<h:outputText value="#{node.type} : #{node.name} = ***NIL***" rendered="#{node.nil}" />
         				</rich:treeNode>
 		        	</rich:tree>
+		        	<br/>
+		        	<a4j:commandButton value="View message" render="popupView"
+                       id="viewMessageButton" oncomplete="#{rich:component('popupView')}.show();">
+                    </a4j:commandButton>
+                    <rich:popupPanel id="popupView" modal="true" resizeable="true" onmaskclick="#{rich:component('popupView')}.hide()" minWidth="550" minHeight="450">
+                        <f:facet name="header">
+                            <h:outputText value="SOAP response message" />
+                        </f:facet>
+                        <f:facet name="controls">
+                            <h:outputLink value="#" onclick="#{rich:component('popupView')}.hide(); return false;">X</h:outputLink>
+                        </f:facet>
+                        <p>Below is the captured SOAP response message:</p>
+                        <div align="center"><h:inputTextarea value="#{clientConversationBean.responseMessage}" cols="80" rows="20" readonly="true" styleClass="preformatted"/></div>
+                    </rich:popupPanel>
                 </h:form>
             </rich:panel>
             <rich:panel header="Error" rendered="#{not empty clientConversationBean.error}">

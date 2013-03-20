@@ -70,6 +70,7 @@ public class ClientConversationBean implements Serializable {
     private String error;
     private UITree inTree;
     private String requestPreview;
+    private String responseMessage;
     private String requestActiveTab;
 
     @PostConstruct
@@ -114,6 +115,7 @@ public class ClientConversationBean implements Serializable {
     public void parseOperationParameters() {
 	if (currentOperation == null) return;
 	outputTree = null;
+	responseMessage = null;
 	error = null;
 	try {
 	    inputTree = ClientHelper.convertOperationParametersToGui(ClientHelper.getWSMethod(currentOperation, client), client);
@@ -126,9 +128,11 @@ public class ClientConversationBean implements Serializable {
     public void performInvocation() {
 	outputTree = null;
 	error = null;
+	responseMessage = null;
 	try {
 	    WSMethod wsMethod = ClientHelper.getWSMethod(currentOperation, client);
 	    InvocationResult result = null;
+	    ByteArrayOutputStream os = new ByteArrayOutputStream();
 	    try {
 		Map<String, Object> params = ClientHelper.processGUIParameters(inputTree);
 		ClientHelper.addOUTParameters(params, wsMethod, client);
@@ -136,10 +140,16 @@ public class ClientConversationBean implements Serializable {
 		endpoint.setTargetUrl(invocationUrl);
 		endpoint.setPassword(invocationPwd);
 		endpoint.setUsername(invocationUser);
+		endpoint.addHandler(new ResponseLogHandler(os));
 		result = wsMethod.invoke(params);
 	    } catch (InvocationException e) {
 		logException(e);
 		error = "Unexpected fault / error received from target endpoint";
+	    } finally {
+		responseMessage = os.toString("UTF-8");
+		if (responseMessage.trim().length() == 0) {
+		    responseMessage = null;
+		}
 	    }
 	    if (result != null) {
 		outputTree = ClientHelper.convertOperationResultToGui(result, client);
@@ -194,6 +204,10 @@ public class ClientConversationBean implements Serializable {
 	}
     }
     
+    public boolean isResponseAvailable() {
+	return outputTree != null || responseMessage != null;
+    }
+    
     private void cleanup() {
 	if (client != null) {
 	    cleanupTask.removeRef(client);
@@ -209,6 +223,7 @@ public class ClientConversationBean implements Serializable {
 	}
 	inputTree = null;
 	error = null;
+	responseMessage = null;
 	invocationUrl = null;
     }
     
@@ -342,6 +357,14 @@ public class ClientConversationBean implements Serializable {
 
     public void setRequestActiveTab(String requestActiveTab) {
         this.requestActiveTab = requestActiveTab;
+    }
+
+    public String getResponseMessage() {
+        return responseMessage;
+    }
+
+    public void setResponseMessage(String responseMessage) {
+        this.responseMessage = responseMessage;
     }
 
     private static void logException(Exception e) {
