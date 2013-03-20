@@ -31,6 +31,7 @@ import javax.inject.Named;
 import org.jboss.logging.Logger;
 import org.jboss.wise.core.client.InvocationResult;
 import org.jboss.wise.core.client.WSDynamicClient;
+import org.jboss.wise.core.client.WSEndpoint;
 import org.jboss.wise.core.client.WSMethod;
 import org.jboss.wise.core.client.builder.WSDynamicClientBuilder;
 import org.jboss.wise.core.client.impl.reflection.builder.ReflectionBasedWSDynamicClientBuilder;
@@ -59,6 +60,9 @@ public class ClientConversationBean implements Serializable {
     private String wsdlUrl;
     private String wsdlUser;
     private String wsdlPwd;
+    private String invocationUrl;
+    private String invocationUser;
+    private String invocationPwd;
     private List<Service> services;
     private String currentOperation;
     private TreeNodeImpl inputTree;
@@ -66,6 +70,7 @@ public class ClientConversationBean implements Serializable {
     private String error;
     private UITree inTree;
     private String requestPreview;
+    private String requestActiveTab;
 
     @PostConstruct
     public void init() {
@@ -81,12 +86,10 @@ public class ClientConversationBean implements Serializable {
 	conversation.begin();
 	try {
 	    WSDynamicClientBuilder builder = new ReflectionBasedWSDynamicClientBuilder().verbose(true).messageStream(ps).keepSource(true).maxThreadPoolSize(1);
-	    if (wsdlUser != null && wsdlUser.length() > 0) {
-		builder.userName(wsdlUser);
-	    }
-	    if (wsdlPwd != null && wsdlPwd.length() > 0) {
-		builder.password(wsdlPwd);
-	    }
+	    builder.userName(wsdlUser);
+	    invocationUser = wsdlUser;
+	    builder.password(wsdlPwd);
+	    invocationPwd = wsdlPwd;
 	    client = builder.wsdlURL(getWsdlUrl()).build();
 	    cleanupTask.addRef(client, System.currentTimeMillis() + CONVERSATION_TIMEOUT, new CleanupTask.CleanupCallback<WSDynamicClient>() {
 		@Override
@@ -129,6 +132,10 @@ public class ClientConversationBean implements Serializable {
 	    try {
 		Map<String, Object> params = ClientHelper.processGUIParameters(inputTree);
 		ClientHelper.addOUTParameters(params, wsMethod, client);
+		final WSEndpoint endpoint = wsMethod.getEndpoint();
+		endpoint.setTargetUrl(invocationUrl);
+		endpoint.setPassword(invocationPwd);
+		endpoint.setUsername(invocationUser);
 		result = wsMethod.invoke(params);
 	    } catch (InvocationException e) {
 		logException(e);
@@ -149,6 +156,7 @@ public class ClientConversationBean implements Serializable {
 	try {
 	    WSMethod wsMethod = ClientHelper.getWSMethod(currentOperation, client);
 	    ByteArrayOutputStream os = new ByteArrayOutputStream();
+	    wsMethod.getEndpoint().setTargetUrl(null);
 	    wsMethod.writeRequestPreview(ClientHelper.processGUIParameters(inputTree), os);
 	    requestPreview = os.toString("UTF-8");
 	} catch (Exception e) {
@@ -178,9 +186,13 @@ public class ClientConversationBean implements Serializable {
 	el.setNotNil(true);
     }
     
-    public void updateCurrentOperation(ItemChangeEvent event){
-	  setCurrentOperation(event.getNewItemName());
+    public void updateCurrentOperation(ItemChangeEvent event) {
+	String ev = event.getNewItemName();
+	//skip empty/null operation values as those comes from expansion/collapse of the menu panel
+	if (ev != null && ev.length() > 0) {
+	    setCurrentOperation(ev);
 	}
+    }
     
     private void cleanup() {
 	if (client != null) {
@@ -197,6 +209,7 @@ public class ClientConversationBean implements Serializable {
 	}
 	inputTree = null;
 	error = null;
+	invocationUrl = null;
     }
     
     public String getWsdlUrl() {
@@ -212,7 +225,11 @@ public class ClientConversationBean implements Serializable {
     }
 
     public void setWsdlUser(String wsdlUser) {
-        this.wsdlUser = wsdlUser;
+	if (wsdlUser != null && wsdlUser.length() == 0) {
+	    this.wsdlUser = null;
+	} else {
+	    this.wsdlUser = wsdlUser;
+	}
     }
 
     public String getWsdlPwd() {
@@ -220,7 +237,47 @@ public class ClientConversationBean implements Serializable {
     }
 
     public void setWsdlPwd(String wsdlPwd) {
-        this.wsdlPwd = wsdlPwd;
+	if (wsdlPwd != null && wsdlPwd.length() == 0) {
+	    this.wsdlPwd = null;
+	} else {
+	    this.wsdlPwd = wsdlPwd;
+	}
+    }
+
+    public String getInvocationUrl() {
+        return invocationUrl;
+    }
+
+    public void setInvocationUrl(String invocationUrl) {
+	if (invocationUrl != null && invocationUrl.length() == 0) {
+	    this.invocationUrl = null;
+	} else {
+	    this.invocationUrl = invocationUrl;
+	}
+    }
+
+    public String getInvocationUser() {
+        return invocationUser;
+    }
+
+    public void setInvocationUser(String invocationUser) {
+	if (invocationUser != null && invocationUser.length() == 0) {
+	    this.invocationUser = null;
+	} else {
+	    this.invocationUser = invocationUser;
+	}
+    }
+
+    public String getInvocationPwd() {
+        return invocationPwd;
+    }
+
+    public void setInvocationPwd(String invocationPwd) {
+	if (invocationPwd != null && invocationPwd.length() == 0) {
+	    this.invocationPwd = null;
+	} else {
+	    this.invocationPwd = invocationPwd;
+	}
     }
 
     public List<Service> getServices() {
@@ -277,6 +334,14 @@ public class ClientConversationBean implements Serializable {
 
     public void setRequestPreview(String requestPreview) {
         this.requestPreview = requestPreview;
+    }
+
+    public String getRequestActiveTab() {
+        return requestActiveTab;
+    }
+
+    public void setRequestActiveTab(String requestActiveTab) {
+        this.requestActiveTab = requestActiveTab;
     }
 
     private static void logException(Exception e) {
