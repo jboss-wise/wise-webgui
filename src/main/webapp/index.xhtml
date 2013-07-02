@@ -12,292 +12,40 @@
 <ui:composition template="/templates/template.xhtml">
 
     <ui:define name="title">JBoss Wise GUI</ui:define>
-
     <ui:define name="body">
         <fieldset style="width:640px">
             <div>
-               <img src="images/wise-banner-640px.png" border="0" />
+               <a href="." style="border:0px">
+                   <img src="images/wise-banner-640px.png" border="0" />
+               </a>
                <br />
             </div>
-            <rich:panel header="WSDL selection">
-                <h:form id="wsdlSelection">
-                    <h:outputLabel value="URL:" for="wsdlUrlInput"/>
-                    <h:inputText id="wsdlUrlInput" value="#{clientConversationBean.wsdlUrl}" onclick="document.getElementById('wsdlSelection:okButton').disabled=false" />
-                    <h:outputLabel value="User:" for="wsdlUser"/>
-                    <h:inputText id="wsdlUser" value="#{clientConversationBean.wsdlUser}" onclick="document.getElementById('wsdlSelection:okButton').disabled=false" />
-                    <h:outputLabel value="Password:" for="wsdlPwd"/>
-                    <h:inputSecret id="wsdlPwd" value="#{clientConversationBean.wsdlPwd}" onclick="document.getElementById('wsdlSelection:okButton').disabled=false" />
-                    <a4j:commandButton id="okButton" value="OK" render="epSelection" action="#{clientConversationBean.readWsdl}" onclick="this.disabled=true" status="wsdlParseStatus" />
-                </h:form>
-            </rich:panel>
-            <br />
-            <a4j:outputPanel id="opSelectionPanel">
-            <rich:panel header="Operation selection">
-                <h:form id="epSelection">
-                    <rich:panelMenu itemMode="ajax" groupMode="ajax" groupExpandedLeftIcon="triangleUp" rendered="#{not empty clientConversationBean.services}"
-                        groupCollapsedLeftIcon="triangleDown" topGroupExpandedRightIcon="chevronUp"
-                        topGroupCollapsedRightIcon="chevronDown" itemLeftIcon="disc" itemChangeListener="#{clientConversationBean.updateCurrentOperation}">
-                        <c:forEach var="service" items="#{clientConversationBean.services}" >
-                            <rich:panelMenuGroup label="#{service.name}" expanded="true">
-                                <c:forEach var="port" items="#{service.ports}" >
-                                    <rich:panelMenuGroup label="#{port.name}" expanded="true">
-                                        <c:forEach var="operation" items="#{port.operations}" >
-                                            <rich:panelMenuItem label="#{operation.fullName}" name="#{service.name};#{port.name};#{operation.name}"
-                                                action="#{clientConversationBean.parseOperationParameters}" render="parInputPanel parInput"/>
-                                        </c:forEach>
-                                    </rich:panelMenuGroup>
-                                </c:forEach>
-                            </rich:panelMenuGroup>
-                        </c:forEach>
-                    </rich:panelMenu>
-                </h:form>
-            </rich:panel>
-            <br />
-            <a4j:outputPanel id="parInputPanel" ajaxRendered="true">
             
-            <rich:panel header="Request" rendered="#{not empty clientConversationBean.inputTree}">
-                <h:form id="parInput">
-                    <rich:tabPanel switchType="ajax" activeItem="#{clientConversationBean.requestActiveTab}">
-                        <rich:tab header="Parameters ">
-                            <rich:tree id="richTree" var="node" value="#{clientConversationBean.inputTree}" nodeType="#{node.kind}" 
-		        		        switchType="ajax" binding="#{clientConversationBean.inTree}">
-				                <rich:treeNode type="simple">
-				                	<h:outputText value="#{node.type} : #{node.name} " />
-        					        <h:selectBooleanCheckbox id="foo-chk" value="#{node.notNil}" disabled="#{node.notNillable}" >
-		        			           <f:ajax />
-					                </h:selectBooleanCheckbox>
-        					        <h:inputText value="#{node.value}" id="foo" label="" rendered="#{node.type!='boolean' and node.type!='Boolean'}" columns="10"  >
-		        			           <f:ajax event="valueChange" render="foo-chk" listener="#{clientConversationBean.onInputFocus(node)}" />
-				        	        </h:inputText>
-					                <h:selectOneMenu value="#{node.value}" rendered="#{node.type=='boolean' or node.type=='Boolean'}">
-        						        <f:selectItem itemValue="true" itemLabel="true" />
-        						        <f:selectItem itemValue="false" itemLabel="false" />
-                					</h:selectOneMenu>
-				        	        <a4j:commandLink action="#{clientConversationBean.removeChild(node)}" rerender="richTree" rendered="#{node.removable}">
-				                		Remove
-                					</a4j:commandLink>
-		        		        </rich:treeNode>
-				                <rich:treeNode type="group">
-					                <h:outputText value="[#{node.type}]" styleClass="tipoCampo" />
-                					<h:selectBooleanCheckbox value="#{node.notNil}" disabled="true" />
-		                			<h:outputText value="&nbsp;" />
-		                			<a4j:commandLink name="Add" action="#{clientConversationBean.addChild(node)}" reRender="richTree">
-						                Add
-                					</a4j:commandLink>
-                					<a4j:commandLink action="#{clientConversationBean.removeChild(node)}" rerender="richTree" rendered="#{node.removable}">
-				                		Remove
-        				        	</a4j:commandLink>
-        		        		</rich:treeNode>
-		        		        <rich:treeNode type="lazy">
-				                    <h:outputText value="#{node.type} ..." />
-		        		        	<h:outputText value="&nbsp;" />
-        		        			<a4j:commandLink name="Load" action="#{clientConversationBean.lazyLoadChild(node)}" reRender="richTree" rendered="#{not node.resolved}">
-		        				        Load 
-        		        			</a4j:commandLink>
-					                <a4j:commandLink action="#{clientConversationBean.removeChild(node)}" rerender="richTree" rendered="#{node.removable}">
-				        		        Remove
-                					</a4j:commandLink>
-		                		</rich:treeNode>
-				                <rich:treeNode type="complex">
-					                <h:outputText value="#{node.type} : #{node.name} " />
-        					        <h:selectBooleanCheckbox value="#{node.notNil}" disabled="#{node.notNillable}" >
-		        			           <f:ajax />
-				        	        </h:selectBooleanCheckbox>
-        				        	<h:outputText value="&nbsp;&nbsp;" />
-        					        <a4j:commandLink action="#{clientConversationBean.removeChild(node)}" rerender="richTree" rendered="#{node.removable}">
-		        		        		Remove
-        		        			</a4j:commandLink>
-				                </rich:treeNode>
-        				        <rich:treeNode type="Parameterized">
-		        			        <h:outputText value="{#{node.namespace}} " />
-				        	        <h:selectBooleanCheckbox value="#{node.notNil}" disabled="true" />
-				                </rich:treeNode>
-        				        <rich:treeNode type="XMLGregorianCalendar">
-                					        <h:outputText value="#{node.type} : #{node.name} " styleClass="tipoCampo" />
-		                			<h:selectBooleanCheckbox id="foo2-chk" value="#{node.notNil}" disabled="#{node.notNillable}" >
-		        		        	   <f:ajax />
-        					        </h:selectBooleanCheckbox>
-		        		        	<rich:calendar id="foo2" value="#{node.valueDate}" popup="true" showInput="true" enableManualInput="false" >
-				        		        <f:ajax event="change" render="foo2-chk" listener="#{clientConversationBean.onInputFocus(node)}" />
-						            </rich:calendar>
-                					<a4j:commandLink action="#{clientConversationBean.removeChild(node)}" rerender="richTree" rendered="#{node.removable}">
-		        		        		Remove
-        		        			</a4j:commandLink>
-        		        		</rich:treeNode>
-		        		        <rich:treeNode type="Duration">
-        		        			<h:outputText value="#{node.type} : #{node.name} " styleClass="tipoCampo" />
-		        		        	<h:selectBooleanCheckbox id="foo3-chk" value="#{node.notNil}" disabled="#{node.notNillable}" >
-        		        			   <f:ajax />
-		        			        </h:selectBooleanCheckbox>
-				                	<h:inputText id="foo3" value="#{node.value}">
-				                	   <f:ajax event="valueChange" render="foo3-chk" listener="#{clientConversationBean.onInputFocus(node)}" />
-        				        	</h:inputText>
-                					<h:outputText value="(MilliSeconds)" target="_blank" />
-		                			<h:outputText value="&nbsp;" />
-		        		        	<a4j:commandLink action="#{clientConversationBean.removeChild(node)}" rerender="richTree" rendered="#{node.removable}">
-				        		        Remove
-                					</a4j:commandLink>
-		        		        </rich:treeNode>
-        		        		<rich:treeNode type="qname">
-		        		        	<h:outputText value="#{node.type} : #{node.name} " styleClass="tipoCampo" />
-        				        	<h:selectBooleanCheckbox id="foo4-chk" value="#{node.notNil}" disabled="#{node.notNillable}" >
-		        		        	   <f:ajax />
-				        	        </h:selectBooleanCheckbox>
-		        		        	<h:inputText id="foo4" value="#{node.nameSpace}">
-        		        			   <f:ajax event="valueChange" render="foo4-chk" listener="#{clientConversationBean.onInputFocus(node)}" />
-		                			</h:inputText>
-				                	<h:outputText value=" : " />
-        				        	<h:inputText value="#{node.localPart}" />
-        		        			<h:outputText value="&nbsp;" />
-		                			<a4j:commandLink action="#{clientConversationBean.removeChild(node)}" rerender="richTree" rendered="#{node.removable}">
-				                		Remove
-        				        	</a4j:commandLink>
-        				        </rich:treeNode>
-                				<rich:treeNode type="Enumeration">
-		                			<h:outputText value="#{node.type} : #{node.name} " styleClass="tipoCampo" />
-				                	<h:selectBooleanCheckbox id="foo5-chk" value="#{node.notNil}" disabled="#{node.notNillable}" >
-        				        	   <f:ajax />
-		        			        </h:selectBooleanCheckbox>
-        		        			<h:selectOneMenu id="foo5" value="#{node.value}" onfocus="document.getElementById(this.id + '-chk').checked=true">
-		        		        		<f:selectItems value="#{node.validValue}" />
-        				        	</h:selectOneMenu>
-                					<h:outputText value="&nbsp;" />
-        		        			<a4j:commandLink action="#{clientConversationBean.removeChild(node)}" rerender="richTree" rendered="#{node.removable}">
-				                		Remove
-                					</a4j:commandLink>
-		                		</rich:treeNode>
-				                <rich:treeNode type="byteArray">
-				                	<h:outputText value="#{node.type} : #{node.name} " />
-        					        <h:selectBooleanCheckbox id="foo6-chk" value="#{node.notNil}" disabled="#{node.notNillable}" >
-		        			           <f:ajax />
-				        	        </h:selectBooleanCheckbox>
-					                <h:inputText value="#{node.value}" id="foo6" >
-        					           <f:ajax event="valueChange" render="foo6-chk" listener="#{clientConversationBean.onInputFocus(node)}" />
-		        			        </h:inputText>
-				        	        <a4j:commandLink action="#{clientConversationBean.removeChild(node)}" rerender="richTree" rendered="#{node.removable}">
-				                		Remove
-                					</a4j:commandLink>
-		        		        </rich:treeNode>
-        		            </rich:tree>
-                        </rich:tab>
-                        <rich:tab header="Options">
-                            <h:outputLabel value="Override target address:" for="invUrlInput"/>
-                            <h:inputText id="invUrlInput" value="#{clientConversationBean.invocationUrl}" /><br/><br/>
-                            <h:outputLabel value="User:" for="invUser"/>
-                            <h:inputText id="invUser" value="#{clientConversationBean.invocationUser}" />
-                            <h:outputLabel value="Password:" for="invPwd"/>
-                            <h:inputSecret id="invPwd" value="#{clientConversationBean.invocationPwd}" redisplay="true" />
-                        </rich:tab>
-                    </rich:tabPanel>
-                    
-                    <a4j:commandButton value="Perform invocation" render="opSelectionPanel" rerender="opSelectionPanel"
-                       action="#{clientConversationBean.performInvocation}" status="perfInvStatus" />
-                    <h:outputText value="&nbsp;" />
-                    
-                    <a4j:commandButton value="Preview message" render="popupPreview" action="#{clientConversationBean.generateRequestPreview}"
-                       id="previewButton" oncomplete="#{rich:component('popupPreview')}.show();">
-                    </a4j:commandButton>
-
-                    <rich:popupPanel id="popupPreview" modal="true" resizeable="true" onmaskclick="#{rich:component('popupPreview')}.hide()" minWidth="550" minHeight="450">
-                        <f:facet name="header">
-                            <h:outputText value="SOAP request message preview" />
-                        </f:facet>
-                        <f:facet name="controls">
-                            <h:outputLink value="#" onclick="#{rich:component('popupPreview')}.hide(); return false;">X</h:outputLink>
-                        </f:facet>
-                        <p>Below is a preview of the SOAP message that will be generated upon invocation. The actual message going on the wire might be different
-                           depending on the selected service policy (security, addressing, reliable-messaging, etc.), if any.</p>
-                        <div align="center"><h:inputTextarea value="#{clientConversationBean.requestPreview}" cols="80" rows="20" readonly="true" styleClass="preformatted"/></div>
-                    </rich:popupPanel>
-                    
+            <rich:panel styleClass="wizard">
+                <h:form>
+                    <rich:togglePanel switchType="ajax" itemChangeListener="#{clientConversationBean.changePanel}" status="waitStatus">
+                        <rich:togglePanelItem id="step1">
+                            <ui:include src="step1.xhtml" />
+                        </rich:togglePanelItem>
+                        <rich:togglePanelItem id="step2">
+                            <ui:include src="step2.xhtml" />
+                        </rich:togglePanelItem>
+                        <rich:togglePanelItem id="step3">
+                            <ui:include src="step3.xhtml" />
+                        </rich:togglePanelItem>
+                        <rich:togglePanelItem id="step4">
+                            <ui:include src="step4.xhtml" />
+                        </rich:togglePanelItem>
+                    </rich:togglePanel>
                 </h:form>
             </rich:panel>
             
-            <br />
-            <a4j:outputPanel id="resultPanel" ajaxRendered="true">
-            
-            <rich:panel header="Response" rendered="#{clientConversationBean.responseAvailable}">
-                <h:form id="resForm">
-                    <rich:tree id="richResTree" var="node" value="#{clientConversationBean.outputTree}" nodeType="#{node.kind}" switchType="ajax">
-				        <rich:treeNode type="simple">
-        					<h:outputText value="#{node.type} : #{node.name} = #{node.shortValue}"
-        						rendered="#{node.notNil}" />
-        					<h:outputText value="#{node.type} : #{node.name} = ***NIL***" rendered="#{node.nil}" />
-        				</rich:treeNode>
-		        		<rich:treeNode type="qname">
-				        	<h:outputText value="#{node.type} : #{node.name} = #{node.shortValue}"
-						        rendered="#{node.notNil}" />
-        					<h:outputText value="#{node.type} : #{node.name} = ***NIL***" rendered="#{node.nil}" />
-        				</rich:treeNode>
-		        		<rich:treeNode type="Duration">
-				        	<h:outputText value="#{node.type} : #{node.name} = #{node.shortValue}"
-						        rendered="#{node.notNil}" />
-        					<h:outputText value="#{node.type} : #{node.name} = ***NIL***" rendered="#{node.nil}" />
-        				</rich:treeNode>
-		        		<rich:treeNode type="XMLGregorianCalendar">
-				        	<h:outputText value="#{node.type} : #{node.name} = #{node.shortValue}"
-						        rendered="#{node.notNil}" />
-        					<h:outputText value="#{node.type} : #{node.name} = ***NIL***" rendered="#{node.nil}" />
-        				</rich:treeNode>
-		        		<rich:treeNode type="Enumeration">
-				        	<h:outputText value="#{node.type} : #{node.name} = #{node.shortValue}"
-						        rendered="#{node.notNil}" />
-        					<h:outputText value="#{node.type} : #{node.name} = ***NIL***" rendered="#{node.nil}" />
-        				</rich:treeNode>
-		        		<rich:treeNode type="Parameterized">
-				        	<h:outputText value="{#{node.namespace}}" />
-        				</rich:treeNode>
-		        		<rich:treeNode type="group">
-				        	<h:outputText value="#{node.type}[#{node.size}]" />
-        				</rich:treeNode>
-		        		<rich:treeNode type="complex">
-				        	<h:outputText value="#{node.type} : #{node.name}" />
-        				</rich:treeNode>
-				        <rich:treeNode type="byteArray">
-        					<h:outputText value="#{node.type} : #{node.name} = #{node.value}"
-        						rendered="#{node.notNil}" />
-        					<h:outputText value="#{node.type} : #{node.name} = ***NIL***" rendered="#{node.nil}" />
-        				</rich:treeNode>
-		        	</rich:tree>
-		        	<br/>
-		        	<a4j:commandButton value="View message" render="popupView"
-                       id="viewMessageButton" oncomplete="#{rich:component('popupView')}.show();">
-                    </a4j:commandButton>
-                    <rich:popupPanel id="popupView" modal="true" resizeable="true" onmaskclick="#{rich:component('popupView')}.hide()" minWidth="550" minHeight="450">
-                        <f:facet name="header">
-                            <h:outputText value="SOAP response message" />
-                        </f:facet>
-                        <f:facet name="controls">
-                            <h:outputLink value="#" onclick="#{rich:component('popupView')}.hide(); return false;">X</h:outputLink>
-                        </f:facet>
-                        <p>Below is the captured SOAP response message:</p>
-                        <div align="center"><h:inputTextarea value="#{clientConversationBean.responseMessage}" cols="80" rows="20" readonly="true" styleClass="preformatted"/></div>
-                    </rich:popupPanel>
-                </h:form>
-            </rich:panel>
-            <rich:panel header="Error" rendered="#{not empty clientConversationBean.error}">
-               <h:outputText value="#{clientConversationBean.error}" />
-            </rich:panel>
-            </a4j:outputPanel>
-            
-            </a4j:outputPanel>
-            
-            </a4j:outputPanel>
-            
-            
-            
-            <rich:popupPanel id="mpPerfInv" style="text-align:center" autosized="true" modal="true">
-               <h:outputText value="Invoking target endpoint and parsing results, please wait..." />
+            <rich:popupPanel id="mpWait" style="text-align:center" autosized="true" modal="true">
+                <h:outputText value="Please wait..." />
             </rich:popupPanel>
-            <rich:popupPanel id="mpParseWsdl" style="text-align:center" autosized="true" modal="true">
-               <h:outputText value="Fetching and parsing wsdl, please wait..." />
-            </rich:popupPanel>
-            <a4j:status name="perfInvStatus" onstart="#{rich:component('mpPerfInv')}.show()" onstop="#{rich:component('mpPerfInv')}.hide()" />
-            <a4j:status name="wsdlParseStatus" onstart="#{rich:component('mpParseWsdl')}.show()" onstop="#{rich:component('mpParseWsdl')}.hide()" />
-            
+            <a4j:status name="waitStatus" onstart="#{rich:component('mpWait')}.show()" onstop="#{rich:component('mpWait')}.hide()" />
             
         </fieldset>
-
     </ui:define>
 </ui:composition>
 </body>

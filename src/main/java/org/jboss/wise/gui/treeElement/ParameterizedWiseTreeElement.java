@@ -49,11 +49,11 @@ public class ParameterizedWiseTreeElement extends WiseTreeElement {
     public ParameterizedWiseTreeElement() {
 	this.kind = PARAMETERIZED;
 	this.id = IDGenerator.nextVal();
+	this.expanded = true;
     }
 
     public ParameterizedWiseTreeElement(ParameterizedType classType, Class<?> parameterizedClass, String name, WSDynamicClient client, Class<?> scope, String namespace) {
-	this.kind = PARAMETERIZED;
-	this.id = IDGenerator.nextVal();
+	this();
 	this.classType = classType;
 	this.nil = false;
 	this.name = name;

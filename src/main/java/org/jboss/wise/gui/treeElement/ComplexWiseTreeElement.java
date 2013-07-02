@@ -43,15 +43,14 @@ public class ComplexWiseTreeElement extends WiseTreeElement {
     private ComplexWiseTreeElement() {
 	this.kind = COMPLEX;
 	this.id = IDGenerator.nextVal();
+	this.expanded = true;
     }
 
     public ComplexWiseTreeElement(Type classType, String name) {
-	this.id = IDGenerator.nextVal();
-	this.kind = COMPLEX;
+	this();
 	this.classType = classType;
 	this.nil = false;
 	this.name = name;
-
     }
 
     public WiseTreeElement clone() {

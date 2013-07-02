@@ -1,0 +1,27 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:a4j="http://richfaces.org/a4j"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:rich="http://richfaces.org/rich">
+      
+        <rich:panel header="WSDL selection">
+            <h:panelGrid columns="2">
+                <h:outputLabel value="URL:" for="wsdlUrlInput"/>
+                <h:inputText id="wsdlUrlInput" value="#{clientConversationBean.wsdlUrl}"/>
+                <h:outputLabel value="User:" for="wsdlUser"/>
+                <h:inputText id="wsdlUser" value="#{clientConversationBean.wsdlUser}"/>
+                <h:outputLabel value="Password:" for="wsdlPwd"/>
+                <h:inputSecret id="wsdlPwd" value="#{clientConversationBean.wsdlPwd}"/>
+            </h:panelGrid>
+        </rich:panel>
+        <div class="navPanel" style="width: 100%;">
+            <a4j:commandButton value="Read WSDL &gt;&gt;" style="float:right">
+                <rich:toggleControl targetItem="@next" event="click" />
+            </a4j:commandButton>
+        </div>
+            
+</ui:composition>

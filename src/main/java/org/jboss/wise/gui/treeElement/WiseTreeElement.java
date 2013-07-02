@@ -48,6 +48,7 @@ public abstract class WiseTreeElement extends TreeNodeImpl implements TreeNode, 
     protected Object id;
     protected String name;
     protected String kind; // simple, complex, array, date, etc
+    protected boolean expanded = false;
 
     protected boolean nil; //whether this elements has the attribute xsi:nil set to "true"
     protected boolean nillable = true; //for primitives and explicitly not nillable elements
@@ -131,6 +132,14 @@ public abstract class WiseTreeElement extends TreeNodeImpl implements TreeNode, 
 
     public void setNotNil(boolean notNil) {
 	this.setNil(!notNil);
+    }
+
+    public boolean isExpanded() {
+        return expanded;
+    }
+
+    public void setExpanded(boolean expanded) {
+        this.expanded = expanded;
     }
 
     public String getType() {

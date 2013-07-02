@@ -136,6 +136,54 @@ public class ClientHelper implements Serializable {
 	return services;
     }
     
+    public static String getFirstGuiOperation(List<Service> services) {
+	if (services == null || services.isEmpty()) {
+	    return null;
+	}
+	Service s = services.iterator().next();
+	List<Port> ports = s.getPorts();
+	if (ports == null || ports.isEmpty()) {
+	    return null;
+	}
+	Port p = ports.iterator().next();
+	List<Operation> operations = p.getOperations();
+	if (operations == null || operations.isEmpty()) {
+	    return null;
+	}
+	Operation o = operations.iterator().next();
+	StringBuilder sb = new StringBuilder();
+	sb.append(s.getName());
+	sb.append(";");
+	sb.append(p.getName());
+	sb.append(";");
+	sb.append(o.getName());
+	return sb.toString();
+    }
+    
+    public static String getOperationFullName(String currentGuiOperation, List<Service> services) {
+	if (currentGuiOperation == null) {
+	    return null;
+	}
+	StringTokenizer st = new StringTokenizer(currentGuiOperation, ";");
+	String serviceName = st.nextToken();
+	String portName = st.nextToken();
+	String operationName = st.nextToken();
+	for (Service s : services) {
+	    if (serviceName.equals(s.getName())) {
+		for (Port p : s.getPorts()) {
+		    if (portName.equals(p.getName())) {
+			for (Operation o : p.getOperations()) {
+			    if (operationName.equals(o.getName())) {
+				return o.getFullName();
+			    }
+			}
+		    }
+		}
+	    }
+	}
+	return null;
+    }
+    
     public static Map<String, Object> processGUIParameters(TreeNodeImpl inputTree) {
 	Map<String, Object> params = new HashMap<String, Object>();
 	for (Iterator<Object> it = inputTree.getChildrenKeysIterator(); it.hasNext();) {

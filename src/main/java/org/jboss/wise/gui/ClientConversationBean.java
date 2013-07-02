@@ -65,6 +65,7 @@ public class ClientConversationBean implements Serializable {
     private String invocationPwd;
     private List<Service> services;
     private String currentOperation;
+    private String currentOperationFullName;
     private TreeNodeImpl inputTree;
     private TreeNodeImpl outputTree;
     private String error;
@@ -105,6 +106,7 @@ public class ClientConversationBean implements Serializable {
 	if (client != null) {
 	    try {
 		services = ClientHelper.convertServicesToGui(client.processServices());
+		currentOperation = ClientHelper.getFirstGuiOperation(services);
 	    } catch (Exception e) {
 		error = "Could not parse WSDL from specified URL. Please check logs for further information.";
 		logException(e);
@@ -113,7 +115,6 @@ public class ClientConversationBean implements Serializable {
     }
     
     public void parseOperationParameters() {
-	if (currentOperation == null) return;
 	outputTree = null;
 	responseMessage = null;
 	error = null;
@@ -196,6 +197,26 @@ public class ClientConversationBean implements Serializable {
 	el.setNotNil(true);
     }
     
+    public void changePanel(ItemChangeEvent event) {
+	String oldName = event.getOldItemName();
+	String newName = event.getNewItemName();
+	if (oldName != null && newName != null) {
+	    if (oldName.endsWith("step1")) {
+		if (newName.endsWith("step2")) {
+		    readWsdl();
+		}
+    	    } else if (oldName.endsWith("step2")) {
+		if (newName.endsWith("step3")) {
+		    parseOperationParameters();
+		}
+	    } else if (oldName.endsWith("step3")) {
+		if (newName.endsWith("step4")) {
+		    performInvocation();
+		}
+    	    }
+	}
+    }
+    
     public void updateCurrentOperation(ItemChangeEvent event) {
 	String ev = event.getNewItemName();
 	//skip empty/null operation values as those comes from expansion/collapse of the menu panel
@@ -216,6 +237,7 @@ public class ClientConversationBean implements Serializable {
 	}
 	services = null;
 	currentOperation = null;
+	currentOperationFullName = null;
 	inputTree = null;
 	outputTree = null;
 	if (inTree != null) {
@@ -306,9 +328,14 @@ public class ClientConversationBean implements Serializable {
     public String getCurrentOperation() {
         return currentOperation;
     }
+    
+    public String getCurrentOperationFullName() {
+	return currentOperationFullName;
+    }
 
     public void setCurrentOperation(String currentOperation) {
         this.currentOperation = currentOperation;
+        this.currentOperationFullName = ClientHelper.getOperationFullName(currentOperation, services);
     }
 
     public UITree getInTree() {

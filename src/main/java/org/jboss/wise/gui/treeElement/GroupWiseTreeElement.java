@@ -37,11 +37,11 @@ public class GroupWiseTreeElement extends WiseTreeElement {
     private GroupWiseTreeElement() {
 	this.kind = GROUP;
 	this.id = IDGenerator.nextVal();
+	this.expanded = true;
     }
 
     public GroupWiseTreeElement(Type classType, String name, WiseTreeElement prototype) {
-	this.kind = GROUP;
-	this.id = IDGenerator.nextVal();
+	this();
 	this.classType = classType;
 	this.nil = false;
 	this.name = name;
