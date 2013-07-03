@@ -171,7 +171,7 @@
                 <rich:toggleControl targetItem="@next" event="click" />
             </a4j:commandButton>
             <a4j:commandButton value="Preview message" render="popupPreview" rendered="#{empty clientConversationBean.error}" action="#{clientConversationBean.generateRequestPreview}" style="float:right"
-                id="previewButton" oncomplete="#{rich:component('popupPreview')}.show();">
+                id="previewButton" oncomplete="#{rich:component('popupPreview')}.show();" status="waitStatus">
             </a4j:commandButton>
         </div>
             

@@ -75,7 +75,7 @@
                 <rich:toggleControl targetItem="@prev" event="click" />
             </a4j:commandButton>
 		    <a4j:commandButton value="View message" render="popupView"  style="float:right" rendered="#{clientConversationBean.responseAvailable}"
-                id="viewMessageButton" oncomplete="#{rich:component('popupView')}.show();">
+                id="viewMessageButton" oncomplete="#{rich:component('popupView')}.show();" status="waitStatus">
             </a4j:commandButton>
         </div>
             
