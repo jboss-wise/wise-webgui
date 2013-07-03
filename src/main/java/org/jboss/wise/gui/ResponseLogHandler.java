@@ -32,16 +32,16 @@ import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.ws.handler.LogicalHandler;
+import javax.xml.ws.handler.LogicalMessageContext;
 import javax.xml.ws.handler.MessageContext;
-import javax.xml.ws.handler.soap.SOAPHandler;
-import javax.xml.ws.handler.soap.SOAPMessageContext;
 
 /**
  * Logs the client inbound response message
  * 
  * @author alessio.soldano@jboss.com
  */
-public class ResponseLogHandler implements SOAPHandler<SOAPMessageContext> {
+public class ResponseLogHandler implements LogicalHandler<LogicalMessageContext> {
 
     private final OutputStream outputStream;
 
@@ -53,12 +53,12 @@ public class ResponseLogHandler implements SOAPHandler<SOAPMessageContext> {
 	return new HashSet<QName>(); // empty set
     }
 
-    public boolean handleMessage(SOAPMessageContext smc) {
+    public boolean handleMessage(LogicalMessageContext smc) {
 	doLog(smc);
 	return true;
     }
 
-    public boolean handleFault(SOAPMessageContext smc) {
+    public boolean handleFault(LogicalMessageContext smc) {
 	doLog(smc);
 	return true;
     }
@@ -67,7 +67,7 @@ public class ResponseLogHandler implements SOAPHandler<SOAPMessageContext> {
     public void close(MessageContext messageContext) {
     }
 
-    private void doLog(SOAPMessageContext smc) {
+    private void doLog(LogicalMessageContext smc) {
 	if (!(Boolean) smc.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY)) {
 	    try {
 		TransformerFactory tff = TransformerFactory.newInstance();
@@ -75,7 +75,7 @@ public class ResponseLogHandler implements SOAPHandler<SOAPMessageContext> {
 		tf.setOutputProperty(OutputKeys.INDENT, "yes");
 		tf.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
 		
-		Source sc = smc.getMessage().getSOAPPart().getContent();
+		Source sc = smc.getMessage().getPayload();
 		
 		StreamResult result = new StreamResult(outputStream);
 		tf.transform(sc, result);
@@ -87,5 +87,4 @@ public class ResponseLogHandler implements SOAPHandler<SOAPMessageContext> {
 	    }
 	}
     }
-
 }
