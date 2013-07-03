@@ -100,7 +100,7 @@ public class ClientConversationBean implements Serializable {
 		}
 	    });
 	} catch (Exception e) {
-	    error = "Could not read WSDL from specified URL. Please check logs for further information.";
+	    error = "Could not read WSDL from specified URL. Please check credentials and see logs for further information.";
 	    logException(e);
 	}
 	if (client != null) {
@@ -209,10 +209,18 @@ public class ClientConversationBean implements Serializable {
     	    } else if (oldName.endsWith("step2")) {
 		if (newName.endsWith("step3")) {
 		    parseOperationParameters();
+		} else if (newName.endsWith("step1")) {
+		    this.error = null;
 		}
 	    } else if (oldName.endsWith("step3")) {
 		if (newName.endsWith("step4")) {
 		    performInvocation();
+		} else if (newName.endsWith("step2")) {
+		    this.error = null;
+		}
+    	    } else if (oldName.endsWith("step4")) {
+    		if (newName.endsWith("step3")) {
+		    this.error = null;
 		}
     	    }
 	}
