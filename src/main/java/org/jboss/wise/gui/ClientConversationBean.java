@@ -119,6 +119,7 @@ public class ClientConversationBean implements Serializable {
 	responseMessage = null;
 	error = null;
 	try {
+	    currentOperationFullName = ClientHelper.getOperationFullName(currentOperation, services);
 	    inputTree = ClientHelper.convertOperationParametersToGui(ClientHelper.getWSMethod(currentOperation, client), client);
 	} catch (Exception e) {
 	    error = ClientHelper.toErrorMessage(e);
@@ -335,7 +336,6 @@ public class ClientConversationBean implements Serializable {
 
     public void setCurrentOperation(String currentOperation) {
         this.currentOperation = currentOperation;
-        this.currentOperationFullName = ClientHelper.getOperationFullName(currentOperation, services);
     }
 
     public UITree getInTree() {

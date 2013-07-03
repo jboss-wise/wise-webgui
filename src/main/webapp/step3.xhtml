@@ -160,14 +160,17 @@
         </a4j:outputPanel>
         
         </rich:panel>
+        <rich:panel header="Error" rendered="#{not empty clientConversationBean.error}">
+            <h:outputText value="#{clientConversationBean.error}" />
+        </rich:panel>
         <div class="navPanel" style="width: 100%;">
             <a4j:commandButton value="&lt;&lt; Back" style="float:left">
                 <rich:toggleControl targetItem="@prev" event="click" />
             </a4j:commandButton>
-            <a4j:commandButton value="Invoke &gt;&gt;" style="float:right">
+            <a4j:commandButton value="Invoke &gt;&gt;" style="float:right" rendered="#{empty clientConversationBean.error}">
                 <rich:toggleControl targetItem="@next" event="click" />
             </a4j:commandButton>
-            <a4j:commandButton value="Preview message" render="popupPreview" action="#{clientConversationBean.generateRequestPreview}" style="float:right"
+            <a4j:commandButton value="Preview message" render="popupPreview" rendered="#{empty clientConversationBean.error}" action="#{clientConversationBean.generateRequestPreview}" style="float:right"
                 id="previewButton" oncomplete="#{rich:component('popupPreview')}.show();">
             </a4j:commandButton>
         </div>

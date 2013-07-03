@@ -137,27 +137,23 @@ public class ClientHelper implements Serializable {
     }
     
     public static String getFirstGuiOperation(List<Service> services) {
-	if (services == null || services.isEmpty()) {
+	if (services == null) {
 	    return null;
 	}
-	Service s = services.iterator().next();
-	List<Port> ports = s.getPorts();
-	if (ports == null || ports.isEmpty()) {
-	    return null;
+	for (Service s : services) {
+	    for (Port p : s.getPorts()) {
+		for (Operation o : p.getOperations()) {
+		    StringBuilder sb = new StringBuilder();
+		    sb.append(s.getName());
+		    sb.append(";");
+		    sb.append(p.getName());
+		    sb.append(";");
+		    sb.append(o.getName());
+		    return sb.toString();
+		}
+	    }
 	}
-	Port p = ports.iterator().next();
-	List<Operation> operations = p.getOperations();
-	if (operations == null || operations.isEmpty()) {
-	    return null;
-	}
-	Operation o = operations.iterator().next();
-	StringBuilder sb = new StringBuilder();
-	sb.append(s.getName());
-	sb.append(";");
-	sb.append(p.getName());
-	sb.append(";");
-	sb.append(o.getName());
-	return sb.toString();
+	return null;
     }
     
     public static String getOperationFullName(String currentGuiOperation, List<Service> services) {

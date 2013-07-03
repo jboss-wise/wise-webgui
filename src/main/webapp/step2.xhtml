@@ -25,11 +25,14 @@
                 </c:forEach>
             </rich:panelMenu>
         </rich:panel>
+        <rich:panel header="Error" rendered="#{not empty clientConversationBean.error}">
+            <h:outputText value="#{clientConversationBean.error}" />
+        </rich:panel>
         <div class="navPanel" style="width: 100%;">
             <a4j:commandButton value="&lt;&lt; Back" style="float:left">
                 <rich:toggleControl targetItem="@prev" event="click" />
             </a4j:commandButton>
-            <a4j:commandButton value="Select &gt;&gt;" style="float:right" rendered="#{not empty clientConversationBean.currentOperation}">
+            <a4j:commandButton value="Select &gt;&gt;" style="float:right" rendered="#{empty clientConversationBean.error}">
                 <rich:toggleControl targetItem="@next" event="click" />
             </a4j:commandButton>
         </div>
