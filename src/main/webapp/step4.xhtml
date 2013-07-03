@@ -8,12 +8,11 @@
       xmlns:c="http://java.sun.com/jsp/jstl/core"
       xmlns:rich="http://richfaces.org/rich">
       
-        <rich:panel header="Response" rendered="#{clientConversationBean.responseAvailable}">
-            <a4j:outputPanel id="parOutputPanel" ajaxRendered="true"> <!-- The tree must live within a ajaxRendered outputPanel in order for properly refreshing! -->
-                <div>
-                    <i>#{clientConversationBean.currentOperationFullName}</i>
-                </div>
-                <rich:tree id="richResTree" var="node" value="#{clientConversationBean.outputTree}" nodeType="#{node.kind}" switchType="ajax">
+        <rich:panel header="Response3" rendered="#{clientConversationBean.responseAvailable}">
+            <div>
+                <i>#{clientConversationBean.currentOperationFullName}</i>
+            </div>
+            <rich:tree id="richResTree" var="node" value="#{clientConversationBean.outputTree}" nodeType="#{node.kind}" selectionType="client" toggleType="client">
 				        <rich:treeNode type="simple">
         					<h:outputText value="#{node.type} : #{node.name} = #{node.shortValue}"
         						rendered="#{node.notNil}" />
@@ -53,7 +52,8 @@
         						rendered="#{node.notNil}" />
         					<h:outputText value="#{node.type} : #{node.name} = ***NIL***" rendered="#{node.nil}" />
         				</rich:treeNode>
-		        </rich:tree>
+		    </rich:tree>
+		    <a4j:region>
                 <rich:popupPanel id="popupView" modal="true" resizeable="true" onmaskclick="#{rich:component('popupView')}.hide()" minWidth="550" minHeight="450">
                     <f:facet name="header">
                         <h:outputText value="SOAP response message" />
@@ -64,7 +64,7 @@
                     <p>Below is the captured SOAP response message:</p>
                     <div align="center"><h:inputTextarea value="#{clientConversationBean.responseMessage}" cols="80" rows="20" readonly="true" styleClass="preformatted"/></div>
                 </rich:popupPanel>
-            </a4j:outputPanel>
+            </a4j:region>
         </rich:panel>
         <rich:panel header="Error" rendered="#{not empty clientConversationBean.error}">
             <h:outputText value="#{clientConversationBean.error}" />

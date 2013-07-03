@@ -9,12 +9,11 @@
       xmlns:rich="http://richfaces.org/rich">
       
         <rich:panel header="Request">
-            <a4j:outputPanel id="parInputPanel" ajaxRendered="true"> <!-- The tree must live within a ajaxRendered outputPanel in order for properly refreshing! -->
-                            <div>
-                                <i>#{clientConversationBean.currentOperationFullName}</i>
-                            </div>
-                            <rich:tree id="richTree" var="node" value="#{clientConversationBean.inputTree}" nodeType="#{node.kind}" 
-		        		        switchType="ajax" binding="#{clientConversationBean.inTree}">
+                <div>
+                    <i>#{clientConversationBean.currentOperationFullName}</i>
+                </div>
+                <a4j:outputPanel id="parInputPanel" ajaxRendered="true"> <!-- The tree must live within a ajaxRendered outputPanel in order for properly refreshing! -->
+                            <rich:tree id="richTree" var="node" value="#{clientConversationBean.inputTree}" nodeType="#{node.kind}" binding="#{clientConversationBean.inTree}">
 				                <rich:treeNode type="simple">
 				                	<h:outputText value="#{node.type} : #{node.name} " />
         					        <h:selectBooleanCheckbox id="foo-chk" value="#{node.notNil}" disabled="#{node.notNillable}" >
@@ -133,31 +132,29 @@
                 					</a4j:commandLink>
 		        		        </rich:treeNode>
         		            </rich:tree>
-        		            <br />
-                            <rich:panel>
-        		                <h:panelGrid columns="2">
-        		                    <h:outputLabel value="Override target address:" for="invUrlInput"/>
-                                    <h:inputText id="invUrlInput" value="#{clientConversationBean.invocationUrl}" />
-                                    <h:outputLabel value="User:" for="invUser"/>
-                                    <h:inputText id="invUser" value="#{clientConversationBean.invocationUser}" />
-                                    <h:outputLabel value="Password:" for="invPwd"/>
-                                    <h:inputSecret id="invPwd" value="#{clientConversationBean.invocationPwd}" redisplay="true" />
-        		                </h:panelGrid>
-        		            </rich:panel>
-        		            
-                    <rich:popupPanel id="popupPreview" modal="true" resizeable="true" onmaskclick="#{rich:component('popupPreview')}.hide()" minWidth="550" minHeight="450">
-                        <f:facet name="header">
-                            <h:outputText value="SOAP request message preview" />
-                        </f:facet>
-                        <f:facet name="controls">
-                            <h:outputLink value="#" onclick="#{rich:component('popupPreview')}.hide(); return false;">X</h:outputLink>
-                        </f:facet>
-                        <p>Below is a preview of the SOAP message that will be generated upon invocation. The actual message going on the wire might be different
-                           depending on the selected service policy (security, addressing, reliable-messaging, etc.), if any.</p>
-                        <div align="center"><h:inputTextarea value="#{clientConversationBean.requestPreview}" cols="80" rows="20" readonly="true" styleClass="preformatted"/></div>
-                    </rich:popupPanel>
-        
-        </a4j:outputPanel>
+                </a4j:outputPanel>
+        		<br />
+                <rich:panel>
+        		    <h:panelGrid columns="2">
+        		        <h:outputLabel value="Override target address:" for="invUrlInput"/>
+                        <h:inputText id="invUrlInput" value="#{clientConversationBean.invocationUrl}" />
+                        <h:outputLabel value="User:" for="invUser"/>
+                        <h:inputText id="invUser" value="#{clientConversationBean.invocationUser}" />
+                        <h:outputLabel value="Password:" for="invPwd"/>
+                        <h:inputSecret id="invPwd" value="#{clientConversationBean.invocationPwd}" redisplay="true" />
+        		    </h:panelGrid>
+        		</rich:panel>
+                <rich:popupPanel id="popupPreview" modal="true" resizeable="true" onmaskclick="#{rich:component('popupPreview')}.hide()" minWidth="550" minHeight="450">
+                    <f:facet name="header">
+                        <h:outputText value="SOAP request message preview" />
+                    </f:facet>
+                    <f:facet name="controls">
+                        <h:outputLink value="#" onclick="#{rich:component('popupPreview')}.hide(); return false;">X</h:outputLink>
+                    </f:facet>
+                    <p>Below is a preview of the SOAP message that will be generated upon invocation. The actual message going on the wire might be different
+                       depending on the selected service policy (security, addressing, reliable-messaging, etc.), if any.</p>
+                    <div align="center"><h:inputTextarea value="#{clientConversationBean.requestPreview}" cols="80" rows="20" readonly="true" styleClass="preformatted"/></div>
+                </rich:popupPanel>
         
         </rich:panel>
         <rich:panel header="Error" rendered="#{not empty clientConversationBean.error}">
