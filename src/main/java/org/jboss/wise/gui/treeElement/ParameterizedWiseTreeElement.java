@@ -27,8 +27,6 @@ import javax.xml.ws.Holder;
 
 import org.jboss.wise.core.client.WSDynamicClient;
 import org.jboss.wise.core.exception.WiseRuntimeException;
-import org.jboss.wise.core.utils.IDGenerator;
-
 /**
  * A tree element to handle JAXBElement<T>.
  * 

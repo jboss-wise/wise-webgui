@@ -22,7 +22,6 @@ import java.math.BigInteger;
 import java.net.URLEncoder;
 
 import org.jboss.wise.core.exception.WiseRuntimeException;
-import org.jboss.wise.core.utils.IDGenerator;
 import org.jboss.wise.core.utils.JavaUtils;
 
 import sun.misc.BASE64Encoder;

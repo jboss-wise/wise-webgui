@@ -21,8 +21,6 @@ import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.LinkedList;
 
-import org.jboss.wise.core.utils.IDGenerator;
-
 /**
  * This tree element is for arrays and collections of elements
  * 

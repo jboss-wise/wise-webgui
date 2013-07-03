@@ -27,7 +27,6 @@ import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.jboss.wise.core.exception.WiseRuntimeException;
-import org.jboss.wise.core.utils.IDGenerator;
 import org.jboss.wise.core.utils.ReflectionUtils;
 
 /**

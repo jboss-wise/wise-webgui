@@ -20,8 +20,6 @@ import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.Map;
 
-import org.jboss.wise.core.utils.IDGenerator;
-
 /**
  * This tree element is for storing lazy load references to other elements;
  * required because in some uncommon scenario, the parameter trees might

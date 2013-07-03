@@ -34,7 +34,6 @@ import javax.xml.ws.Holder;
 import org.jboss.logging.Logger;
 import org.jboss.wise.core.client.WSDynamicClient;
 import org.jboss.wise.core.exception.WiseRuntimeException;
-import org.jboss.wise.core.utils.IDGenerator;
 import org.jboss.wise.core.utils.ReflectionUtils;
 
 /**
