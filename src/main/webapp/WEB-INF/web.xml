@@ -20,6 +20,14 @@
     <param-name>org.richfaces.resourceOptimization.enabled</param-name>
     <param-value>true</param-value>
   </context-param>
+  <context-param>
+    <param-name>javax.faces.FACELETS_SKIP_COMMENTS</param-name>
+    <param-value>true</param-value>
+  </context-param>
+  <context-param>
+    <param-name>javax.faces.FACELETS_REFRESH_PERIOD</param-name>
+    <param-value>-1</param-value>
+  </context-param>
   <!-- Set the PROJECT_STAGE to 'Development' to receive constructive error messages during development.
   Change the PROJECT_STAGE to 'Production' when putting the application into production -->
   <context-param>
