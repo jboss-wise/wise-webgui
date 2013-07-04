@@ -87,7 +87,8 @@ public class ClientConversationBean implements Serializable {
 	conversation.end();
 	conversation.begin();
 	try {
-	    WSDynamicClientBuilder builder = new ReflectionBasedWSDynamicClientBuilder().verbose(true).messageStream(ps).keepSource(true).maxThreadPoolSize(1);
+	    WSDynamicClientBuilder builder = new ReflectionBasedWSDynamicClientBuilder().verbose(true).messageStream(ps)
+	    	.keepSource(true).excludeNonSOAPPorts(true).maxThreadPoolSize(1);
 	    builder.userName(wsdlUser);
 	    invocationUser = wsdlUser;
 	    builder.password(wsdlPwd);
