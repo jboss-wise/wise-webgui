@@ -64,19 +64,19 @@ public class SimpleWiseTreeElement extends WiseTreeElement {
     }
 
     /**
-     * This is the same as getValue except only the first 40 characters are
+     * This is the same as getValue except only the first 60 characters are
      * considered. This is needed to preview invocation results.
      * 
-     * @return The substring(0,40) of the value
+     * @return The substring(0,60) of the value
      */
     public String getShortValue() {
 	if (getValue() == null) {
 	    return null;
 	}
-	if (getValue().length() <= 40) {
+	if (getValue().length() <= 60) {
 	    return getValue();
 	}
-	return getValue().substring(0, 40) + "...";
+	return getValue().substring(0, 60) + "...";
     }
 
     /**
