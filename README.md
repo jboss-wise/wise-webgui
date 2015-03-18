@@ -11,10 +11,10 @@ The application this project produces is designed to be run on JBoss AS 7.1 or g
 Build and Deploy the application
 --------------------------------
 
-1. Make sure you have started the JBoss Server.
+1. Make sure you have started the JBoss Server / WildFly server.
 2. Type this command to build and deploy the archive:
 
-        mvn clean package jboss-as:deploy
+        mvn clean package jboss-as:deploy (or mvn clean package wildfly:deploy)
 
 3. This will deploy `target/wise-gui.war` to the running instance of the server.
 
@@ -28,7 +28,7 @@ The application will be running at the following URL:  <http://localhost:8080/wi
 Undeploy the Archive
 --------------------
 
-1. Make sure you have started the JBoss Server as described above.
+1. Make sure you have started the JBoss/ WildFly Server as described above.
 2. When you are finished testing, type this command to undeploy the archive:
 
-        mvn jboss-as:undeploy
+        mvn jboss-as:undeploy (or mvn wildfly:undeploy)
