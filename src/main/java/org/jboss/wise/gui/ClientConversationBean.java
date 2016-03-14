@@ -29,12 +29,12 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.jboss.logging.Logger;
+import org.jboss.wise.core.client.BasicWSDynamicClient;
 import org.jboss.wise.core.client.InvocationResult;
-import org.jboss.wise.core.client.WSDynamicClient;
 import org.jboss.wise.core.client.WSEndpoint;
 import org.jboss.wise.core.client.WSMethod;
-import org.jboss.wise.core.client.builder.WSDynamicClientBuilder;
-import org.jboss.wise.core.client.impl.reflection.builder.ReflectionBasedWSDynamicClientBuilder;
+import org.jboss.wise.core.client.builder.BasicWSDynamicClientBuilder;
+import org.jboss.wise.core.client.impl.reflection.builder.ReflectionBasedBasicWSDynamicClientBuilder;
 import org.jboss.wise.core.exception.InvocationException;
 import org.jboss.wise.core.utils.JBossLoggingOutputStream;
 import org.jboss.wise.gui.treeElement.GroupWiseTreeElement;
@@ -51,12 +51,12 @@ public class ClientConversationBean implements Serializable {
     private static final long serialVersionUID = -3778997821476776895L;
     
     private static final int CONVERSATION_TIMEOUT = 15 * 60 * 1000; //15 mins instead of default 30 mins
-    private static CleanupTask<WSDynamicClient> cleanupTask = new CleanupTask<WSDynamicClient>(true);
+    private static CleanupTask<BasicWSDynamicClient> cleanupTask = new CleanupTask<BasicWSDynamicClient>(true);
     private static Logger logger = Logger.getLogger(ClientConversationBean.class);
     private static PrintStream ps = new PrintStream(new JBossLoggingOutputStream(logger, Logger.Level.DEBUG), true);
     
     @Inject Conversation conversation;
-    private WSDynamicClient client;
+    private BasicWSDynamicClient client;
     private String wsdlUrl;
     private String wsdlUser;
     private String wsdlPwd;
@@ -87,16 +87,16 @@ public class ClientConversationBean implements Serializable {
 	conversation.end();
 	conversation.begin();
 	try {
-	    WSDynamicClientBuilder builder = new ReflectionBasedWSDynamicClientBuilder().verbose(true).messageStream(ps)
+	    BasicWSDynamicClientBuilder builder = new ReflectionBasedBasicWSDynamicClientBuilder().verbose(true).messageStream(ps)
 	    	.keepSource(true).excludeNonSOAPPorts(true).maxThreadPoolSize(1);
 	    builder.userName(wsdlUser);
 	    invocationUser = wsdlUser;
 	    builder.password(wsdlPwd);
 	    invocationPwd = wsdlPwd;
 	    client = builder.wsdlURL(getWsdlUrl()).build();
-	    cleanupTask.addRef(client, System.currentTimeMillis() + CONVERSATION_TIMEOUT, new CleanupTask.CleanupCallback<WSDynamicClient>() {
+	    cleanupTask.addRef(client, System.currentTimeMillis() + CONVERSATION_TIMEOUT, new CleanupTask.CleanupCallback<BasicWSDynamicClient>() {
 		@Override
-		public void cleanup(WSDynamicClient data) {
+		public void cleanup(BasicWSDynamicClient data) {
 		    data.close();
 		}
 	    });
