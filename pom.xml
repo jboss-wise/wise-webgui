@@ -48,7 +48,6 @@
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
       <!-- JBoss dependency versions -->
-      <version.org.jboss.as.plugins.maven.plugin>7.3.Final</version.org.jboss.as.plugins.maven.plugin>
       <version.org.wildfly.plugins.maven.plugin>1.0.2.Final</version.org.wildfly.plugins.maven.plugin>
       <version.org.jboss.spec.jboss.javaee.6.0>3.0.0.Final</version.org.jboss.spec.jboss.javaee.6.0>
        
@@ -204,11 +203,6 @@
       <!-- Set the name of the war, used as the context root when the app is deployed -->
       <finalName>wise-gui</finalName>
       <plugins>
-         <plugin>
-            <groupId>org.jboss.as.plugins</groupId>
-            <artifactId>jboss-as-maven-plugin</artifactId>
-            <version>${version.org.jboss.as.plugins.maven.plugin}</version>
-         </plugin>
          <plugin>
             <groupId>org.wildfly.plugins</groupId>
             <artifactId>wildfly-maven-plugin</artifactId>
