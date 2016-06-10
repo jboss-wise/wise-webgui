@@ -14,7 +14,7 @@
 
    <groupId>org.jboss.wise.gui</groupId>
    <artifactId>wise-gui</artifactId>
-   <version>1.1.0.Final</version>
+   <version>1.1.1-SNAPSHOT</version>
    <packaging>war</packaging>
    <name>JBoss Wise GUI</name>
    <description>A GUI for JBoss Wise Core</description>
