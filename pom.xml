@@ -21,9 +21,9 @@
    <url>http://www.jboss.org/wise</url>
 
    <scm>
-      <connection>scm:svn:http://anonsvn.jboss.org/repos/wise/webgui/trunk</connection>
-      <developerConnection>scm:svn:https://svn.jboss.org/repos/wise/webgui/trunk</developerConnection>
-      <url>http://fisheye.jboss.org/viewrep/Wise/webgui/trunk</url>
+      <connection>https://github.com/jboss-wise/wise-webgui.git</connection>
+      <developerConnection>https://github.com/jboss-wise/wise-webgui.git</developerConnection>
+      <url>https://github.com/jboss-wise/wise-webgui</url>
    </scm>
 
    <licenses>
